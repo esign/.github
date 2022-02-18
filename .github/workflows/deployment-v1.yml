@@ -9,11 +9,13 @@ on:
       post_deploy_script:
         required: true
         type: string
+      ssh_host:
+        required: true
+        type: string
+      ssh_user:
+        required: true
+        type: string
     secrets:
-      SSH_HOST:
-        required: true
-      SSH_USER:
-        required: true
       SSH_PRIVATE_KEY:
         required: true
       KNOWN_HOSTS:
@@ -43,8 +45,8 @@ jobs:
           TARGET_SCRIPT: "mkdir -p ${{ inputs.remote_project_folder }}; true"
         uses: ./.github/actions/execute
         with:
-          host: ${{ secrets.SSH_HOST }}
-          user: ${{ secrets.SSH_USER }}
+          host: ${{ inputs.ssh_host }}
+          user: ${{ inputs.ssh_user }}
           target_path: ${{ env.TARGET_PATH }}
           target_script: ${{ env.TARGET_SCRIPT }}
       - name: Upload archive to the webserver
@@ -52,8 +54,8 @@ jobs:
           TARGET_PATH: "${{ inputs.remote_project_folder }}/${GITHUB_SHA}.zip"
         uses: ./.github/actions/scp-put
         with:
-          host: ${{ secrets.SSH_HOST }}
-          user: ${{ secrets.SSH_USER }}
+          host: ${{ inputs.ssh_host }}
+          user: ${{ inputs.ssh_user }}
           source: 'release.zip'
           target: ${{ env.TARGET_PATH }}
       - name: Unzip archive on the webserver
@@ -62,8 +64,8 @@ jobs:
           TARGET_PATH: "${{ inputs.remote_project_folder }}"
         uses: ./.github/actions/unzip
         with:
-          host: ${{ secrets.SSH_HOST }}
-          user: ${{ secrets.SSH_USER }}
+          host: ${{ inputs.ssh_host }}
+          user: ${{ inputs.ssh_user }}
           source: ${{ env.SOURCE_PATH }}
           target: ${{ env.TARGET_PATH }}
       - name: Build project on the webserver
@@ -72,8 +74,8 @@ jobs:
           TARGET_SCRIPT: "bash ${{ inputs.post_deploy_script }}"
         uses: ./.github/actions/execute
         with:
-          host: ${{ secrets.SSH_HOST }}
-          user: ${{ secrets.SSH_USER }}
+          host: ${{ inputs.ssh_host }}
+          user: ${{ inputs.ssh_user }}
           target_path: ${{ env.TARGET_PATH }}
           target_script: ${{ env.TARGET_SCRIPT }}
       - name: Cleanup
@@ -83,7 +85,7 @@ jobs:
           TARGET_SCRIPT: "rm ${GITHUB_SHA}.zip"
         uses: ./.github/actions/execute
         with:
-          host: ${{ secrets.SSH_HOST }}
-          user: ${{ secrets.SSH_USER }}
+          host: ${{ inputs.ssh_host }}
+          user: ${{ inputs.ssh_user }}
           target_path: ${{ env.TARGET_PATH }}
           target_script: ${{ env.TARGET_SCRIPT }}

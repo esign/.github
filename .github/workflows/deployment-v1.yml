@@ -1,4 +1,4 @@
-name: deployment
+name: Deployment
 
 on:
   workflow_call:
@@ -20,7 +20,7 @@ on:
         required: true
 
 jobs:
-  reusable_workflow_job:
+  deployment:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
@@ -40,7 +40,7 @@ jobs:
       - name: Create remote project folder if it doesn't exist
         env:
           TARGET_PATH: "/"
-          TARGET_SCRIPT: "mkdir ${{ inputs.remote_project_folder }}; true"
+          TARGET_SCRIPT: "mkdir -p ${{ inputs.remote_project_folder }}; true"
         uses: ./.github/actions/execute
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -59,7 +59,7 @@ jobs:
       - name: Unzip archive on the webserver
         env:
           SOURCE_PATH: "${{ inputs.remote_project_folder }}/${GITHUB_SHA}.zip"
-          TARGET_PATH: "${{ inputs.remote_project_folder }}/deploy"
+          TARGET_PATH: "${{ inputs.remote_project_folder }}"
         uses: ./.github/actions/unzip
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -68,8 +68,8 @@ jobs:
           target: ${{ env.TARGET_PATH }}
       - name: Build project on the webserver
         env:
-          TARGET_PATH: "${{ inputs.remote_project_folder }}/deploy"
-          TARGET_SCRIPT: "bash ${{ post_deploy_script }}"
+          TARGET_PATH: "${{ inputs.remote_project_folder }}"
+          TARGET_SCRIPT: "bash ${{ inputs.post_deploy_script }}"
         uses: ./.github/actions/execute
         with:
           host: ${{ secrets.SSH_HOST }}

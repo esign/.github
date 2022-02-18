@@ -1,0 +1,15 @@
+name: Esign Production Deployment
+
+on: workflow_dispatch
+
+jobs:
+  call-workflow-passing-data:
+    uses: esign/.github/workflows/deployment-v1.yml@main
+    with:
+      remote_project_folder:
+      post_deploy_script: post_deployment_production.sh
+    secrets:
+      SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
+      SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
+      SSH_PRIVATE_KEY: ${{ secrets.PRODUCTION_SSH_PRIVATE_KEY }}
+      KNOWN_HOSTS: ${{ secrets.PRODUCTION_SSH_KNOWN_HOSTS }}

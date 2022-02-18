@@ -43,7 +43,7 @@ jobs:
         env:
           TARGET_PATH: "/"
           TARGET_SCRIPT: "mkdir -p ${{ inputs.remote_project_folder }}; true"
-        uses: ./.github/actions/execute
+        uses: ./esign/.github/.github/actions/execute
         with:
           host: ${{ inputs.ssh_host }}
           user: ${{ inputs.ssh_user }}
@@ -52,7 +52,7 @@ jobs:
       - name: Upload archive to the webserver
         env:
           TARGET_PATH: "${{ inputs.remote_project_folder }}/${GITHUB_SHA}.zip"
-        uses: ./.github/actions/scp-put
+        uses: ./esign/.github/.github/actions/scp-put
         with:
           host: ${{ inputs.ssh_host }}
           user: ${{ inputs.ssh_user }}
@@ -62,7 +62,7 @@ jobs:
         env:
           SOURCE_PATH: "${{ inputs.remote_project_folder }}/${GITHUB_SHA}.zip"
           TARGET_PATH: "${{ inputs.remote_project_folder }}"
-        uses: ./.github/actions/unzip
+        uses: ./esign/.github/.github/actions/unzip
         with:
           host: ${{ inputs.ssh_host }}
           user: ${{ inputs.ssh_user }}
@@ -72,7 +72,7 @@ jobs:
         env:
           TARGET_PATH: "${{ inputs.remote_project_folder }}"
           TARGET_SCRIPT: "bash ${{ inputs.post_deploy_script }}"
-        uses: ./.github/actions/execute
+        uses: ./esign/.github/.github/actions/execute
         with:
           host: ${{ inputs.ssh_host }}
           user: ${{ inputs.ssh_user }}
@@ -83,7 +83,7 @@ jobs:
         env:
           TARGET_PATH: "${{ inputs.remote_project_folder }}"
           TARGET_SCRIPT: "rm ${GITHUB_SHA}.zip"
-        uses: ./.github/actions/execute
+        uses: ./esign/.github/.github/actions/execute
         with:
           host: ${{ inputs.ssh_host }}
           user: ${{ inputs.ssh_user }}

@@ -28,10 +28,13 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v2
       - name: Install node version according to .nvmrc
+        shell: bash -l -eo pipefail {0}
         run: nvm install
       - name: Install npm dependencies
+        shell: bash -l -eo pipefail {0}
         run: npm install --no-optional
       - name: Build assets
+        shell: bash -l -eo pipefail {0}
         run: npm run prod
       - name: Archive Release
         uses: thedoctor0/zip-release@master

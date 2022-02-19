@@ -41,7 +41,7 @@ jobs:
         with:
           type: 'zip'
           filename: 'release.zip'
-          exclusions: '*.git*'
+          exclusions: '/.*/* /node_modules/* /vendor/* /*.md /*.png /*.log /*.json /*.js'
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:

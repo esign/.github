@@ -1,0 +1,97 @@
+name: Deployment
+
+on:
+  workflow_call:
+    inputs:
+      remote_project_folder:
+        required: true
+        type: string
+      post_deploy_script:
+        required: true
+        type: string
+      ssh_host:
+        required: true
+        type: string
+      ssh_user:
+        required: true
+        type: string
+    secrets:
+      SSH_PRIVATE_KEY:
+        required: true
+      KNOWN_HOSTS:
+        required: true
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+      - name: Install node version according to .nvmrc
+        run: nvm install
+      - name: Install npm dependencies
+        run: npm install --no-optional
+      - name: Build assets
+        run: npm run prod
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: 'release.zip'
+          exclusions: '*.git*'
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          name: id_rsa
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+      - name: Create remote project folder if it doesn't exist
+        env:
+          TARGET_PATH: "/"
+          TARGET_SCRIPT: "mkdir -p ${{ inputs.remote_project_folder }}; true"
+        uses: esign/.github/.github/actions/execute@master
+        with:
+          host: ${{ inputs.ssh_host }}
+          user: ${{ inputs.ssh_user }}
+          target_path: ${{ env.TARGET_PATH }}
+          target_script: ${{ env.TARGET_SCRIPT }}
+      - name: Upload archive to the webserver
+        env:
+          TARGET_PATH: "${{ inputs.remote_project_folder }}/${GITHUB_SHA}.zip"
+        uses: esign/.github/.github/actions/scp-put@master
+        with:
+          host: ${{ inputs.ssh_host }}
+          user: ${{ inputs.ssh_user }}
+          source: 'release.zip'
+          target: ${{ env.TARGET_PATH }}
+      - name: Unzip archive on the webserver
+        env:
+          SOURCE_PATH: "${{ inputs.remote_project_folder }}/${GITHUB_SHA}.zip"
+          TARGET_PATH: "${{ inputs.remote_project_folder }}"
+        uses: esign/.github/.github/actions/unzip@master
+        with:
+          host: ${{ inputs.ssh_host }}
+          user: ${{ inputs.ssh_user }}
+          source: ${{ env.SOURCE_PATH }}
+          target: ${{ env.TARGET_PATH }}
+      # - name: Build project on the webserver
+      #  env:
+      #    TARGET_PATH: "${{ inputs.remote_project_folder }}"
+      #    TARGET_SCRIPT: "bash ${{ inputs.post_deploy_script }}"
+      #  uses: esign/.github/.github/actions/execute@master
+      #  with:
+      #    host: ${{ inputs.ssh_host }}
+      #    user: ${{ inputs.ssh_user }}
+      #    target_path: ${{ env.TARGET_PATH }}
+      #    target_script: ${{ env.TARGET_SCRIPT }}
+      - name: Cleanup
+        if: ${{ always() }}
+        env:
+          TARGET_PATH: "${{ inputs.remote_project_folder }}"
+          TARGET_SCRIPT: "rm ${GITHUB_SHA}.zip"
+        uses: esign/.github/.github/actions/execute@master
+        with:
+          host: ${{ inputs.ssh_host }}
+          user: ${{ inputs.ssh_user }}
+          target_path: ${{ env.TARGET_PATH }}
+          target_script: ${{ env.TARGET_SCRIPT }}

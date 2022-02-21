@@ -27,12 +27,6 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
-      - name: Archive Release
-        uses: thedoctor0/zip-release@master
-        with:
-          type: 'zip'
-          filename: 'release.zip'
-          exclusions: '*.git*'
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
@@ -57,6 +51,7 @@ jobs:
           remote_path: ${{ inputs.remote_project_folder }}
           remote_host: ${{ inputs.ssh_host }}
           remote_user: ${{ inputs.ssh_user }}
+          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Build project on the webserver
         env:
           TARGET_PATH: "${{ inputs.remote_project_folder }}"

@@ -28,8 +28,16 @@ jobs:
   deployment:
     runs-on: ubuntu-latest
     steps:
+      - uses: haya14busa/action-cond@v1
+        id: determine_github_sha
+        with:
+          cond: ${{ inputs.github_sha }}
+          if_true: ${{ inputs.github_sha }}
+          if_false: ${GITHUB_SHA}
       - name: Checkout the repository
         uses: actions/checkout@v2
+        with:
+          ref: steps.determine_github_sha.outputs.value
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:

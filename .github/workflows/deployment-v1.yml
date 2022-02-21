@@ -46,7 +46,7 @@ jobs:
       - name: Upload files to the webserver
         uses: burnett01/rsync-deployments@5.2
         with:
-          switches: -azr --exclude '*.git*' --exclude "node_modules" --exclude "vendor" --exclude "node_modules" --exclude "resources/cache" --delete
+          switches: -azr --exclude '*.git*' --exclude "vendor" --exclude "node_modules" --exclude "resources/cache" --delete
           path: .
           remote_path: ${{ inputs.remote_project_folder }}
           remote_host: ${{ inputs.ssh_host }}

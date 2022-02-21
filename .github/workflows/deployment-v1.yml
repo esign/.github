@@ -49,40 +49,18 @@ jobs:
           user: ${{ inputs.ssh_user }}
           target_path: ${{ env.TARGET_PATH }}
           target_script: ${{ env.TARGET_SCRIPT }}
-      - name: Upload archive to the webserver
-        env:
-          TARGET_PATH: "${{ inputs.remote_project_folder }}/${GITHUB_SHA}.zip"
-        uses: esign/.github/.github/actions/scp-put@master
+      - name: Upload files to the webserver
+        uses: burnett01/rsync-deployments@5.2
         with:
-          host: ${{ inputs.ssh_host }}
-          user: ${{ inputs.ssh_user }}
-          source: 'release.zip'
-          target: ${{ env.TARGET_PATH }}
-      - name: Unzip archive on the webserver
-        env:
-          SOURCE_PATH: "${{ inputs.remote_project_folder }}/${GITHUB_SHA}.zip"
-          TARGET_PATH: "${{ inputs.remote_project_folder }}"
-        uses: esign/.github/.github/actions/unzip@master
-        with:
-          host: ${{ inputs.ssh_host }}
-          user: ${{ inputs.ssh_user }}
-          source: ${{ env.SOURCE_PATH }}
-          target: ${{ env.TARGET_PATH }}
+          switches: -azr --exclude '*.git*' --exclude "node_modules" --exclude "vendor" --exclude "node_modules" --exclude "resources/cache" --delete
+          path: .
+          remote_path: ${{ inputs.remote_project_folder }}
+          remote_host: ${{ inputs.ssh_host }}
+          remote_user: ${{ inputs.ssh_user }}
       - name: Build project on the webserver
         env:
           TARGET_PATH: "${{ inputs.remote_project_folder }}"
           TARGET_SCRIPT: "bash ${{ inputs.post_deploy_script }}"
-        uses: esign/.github/.github/actions/execute@master
-        with:
-          host: ${{ inputs.ssh_host }}
-          user: ${{ inputs.ssh_user }}
-          target_path: ${{ env.TARGET_PATH }}
-          target_script: ${{ env.TARGET_SCRIPT }}
-      - name: Cleanup
-        if: ${{ always() }}
-        env:
-          TARGET_PATH: "${{ inputs.remote_project_folder }}"
-          TARGET_SCRIPT: "rm ${GITHUB_SHA}.zip"
         uses: esign/.github/.github/actions/execute@master
         with:
           host: ${{ inputs.ssh_host }}

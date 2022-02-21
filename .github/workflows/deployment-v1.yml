@@ -17,6 +17,7 @@ on:
         type: string
       github_sha:
         required: false
+        default: ''
         type: string
     secrets:
       SSH_PRIVATE_KEY:

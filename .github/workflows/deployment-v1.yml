@@ -15,6 +15,9 @@ on:
       ssh_user:
         required: true
         type: string
+      github_sha:
+        required: false
+        type: string
     secrets:
       SSH_PRIVATE_KEY:
         required: true

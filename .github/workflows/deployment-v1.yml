@@ -17,7 +17,7 @@ on:
         type: string
       github_sha:
         required: false
-        default: 'HEAD'
+        default: 'GITHUB_SHA'
         type: string
     secrets:
       SSH_PRIVATE_KEY:
@@ -32,9 +32,8 @@ jobs:
       - uses: haya14busa/action-cond@v1
         id: determine_github_sha
         with:
-          cond: ${{ inputs.github_sha != 'HEAD' }}
+          cond: ${{ inputs.github_sha != 'GITHUB_SHA' }}
           if_true: ${{ inputs.github_sha }}
-          if_false: ${GITHUB_SHA}
       - name: Checkout the repository
         uses: actions/checkout@v2
         with:

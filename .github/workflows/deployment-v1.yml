@@ -38,7 +38,7 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v2
         with:
-          ref: steps.determine_github_sha.outputs.value
+          ref: ${{ steps.determine_github_sha.outputs.value }}
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:

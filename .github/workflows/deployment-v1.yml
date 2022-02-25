@@ -28,7 +28,7 @@ jobs:
   deployment:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the repository
+      - name: 'Checkout the repository ${{ inputs.github_sha }}'
         uses: actions/checkout@v2
         with:
           ref: ${{ inputs.github_sha }}

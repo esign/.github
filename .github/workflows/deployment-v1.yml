@@ -32,6 +32,10 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ inputs.github_sha }}
+      - name: Log revision
+        run: |
+          commit=$(git rev-parse HEAD)
+          echo "::notice::Deploying commit $commit"
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:

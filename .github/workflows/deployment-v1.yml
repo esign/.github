@@ -28,14 +28,14 @@ jobs:
   deployment:
     runs-on: ubuntu-latest
     steps:
-      - name: 'Checkout the repository ${{ inputs.github_sha }}'
+      - name: Checkout the repository
         uses: actions/checkout@v2
         with:
           ref: ${{ inputs.github_sha }}
       - name: Log revision
         run: |
           commit=$(git rev-parse HEAD)
-          echo "::notice::Deploying commit $commit"
+          echo "::notice::commit $commit"
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:

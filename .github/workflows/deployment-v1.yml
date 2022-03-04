@@ -21,7 +21,7 @@ on:
       github_sha:
         required: false
         type: string
-        default: "$GITHUB_SHA"
+        default: "${{ env.GITHUB_SHA }}"
     secrets:
       SSH_PRIVATE_KEY:
         required: true
@@ -38,7 +38,7 @@ jobs:
           ref: ${{ inputs.branch }}
       - name: Branch ${{ inputs.branch }} at commit ${{ inputs.github_sha }}
         run: |
-          git checkout -b $GITHUB_RUN_ID-$GITHUB_RUN_NUMBER ${{ inputs.github_sha }}
+          git checkout -b ${{ env.GITHUB_RUN_ID }}-${{ env.GITHUB_RUN_NUMBER }} ${{ inputs.github_sha }}
       - name: Log revision
         run: |
           commit=$(git rev-parse HEAD)
@@ -68,13 +68,13 @@ jobs:
           remote_host: ${{ inputs.ssh_host }}
           remote_user: ${{ inputs.ssh_user }}
           remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
-      - name: Build project on the webserver
-        env:
-          TARGET_PATH: "${{ inputs.remote_project_folder }}"
-          TARGET_SCRIPT: "bash ${{ inputs.post_deploy_script }}"
-        uses: esign/.github/.github/actions/execute@master
-        with:
-          host: ${{ inputs.ssh_host }}
-          user: ${{ inputs.ssh_user }}
-          target_path: ${{ env.TARGET_PATH }}
-          target_script: ${{ env.TARGET_SCRIPT }}
+#      - name: Build project on the webserver
+#        env:
+#          TARGET_PATH: "${{ inputs.remote_project_folder }}"
+#          TARGET_SCRIPT: "bash ${{ inputs.post_deploy_script }}"
+#        uses: esign/.github/.github/actions/execute@master
+#        with:
+#          host: ${{ inputs.ssh_host }}
+#          user: ${{ inputs.ssh_user }}
+#          target_path: ${{ env.TARGET_PATH }}
+#          target_script: ${{ env.TARGET_SCRIPT }}

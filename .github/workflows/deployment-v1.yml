@@ -37,8 +37,8 @@ jobs:
           ref: ${{ inputs.branch }}
       - name: Branch ${{ inputs.branch }} at commit
         env:
-          SHA: ${{ inputs.github_sha && inputs.github_sha || env.GITHUB_SHA }}
-          BRANCH: "$GITHUB_RUN_ID-$env.GITHUB_RUN_NUMBER"
+          SHA: ${{ inputs.github_sha != "" && inputs.github_sha || env.GITHUB_SHA }}
+          BRANCH: "$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER"
         run: |
           git checkout -b ${{ env.BRANCH }} ${{ env.SHA }}
       - name: Log revision

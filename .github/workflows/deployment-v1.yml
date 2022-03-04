@@ -35,12 +35,12 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ inputs.branch }}
-      - name: Branch ${{ inputs.branch }} at commit ${{ GITHUB_SHA }}
+      - name: Branch ${{ inputs.branch }} at commit ${{ env.GITHUB_SHA }}
         env:
-          SHA: ${{ inputs.github_sha != '' && inputs.github_sha || GITHUB_SHA }}
+          SHA: ${{ inputs.github_sha || GITHUB_SHA }}
           BRANCH: "$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER"
         run: |
-          git checkout -b ${{ env.BRANCH }} ${{ env.SHA }}
+          git checkout -b $BRANCH $SHA
       - name: Log revision
         run: |
           commit=$(git rev-parse HEAD)

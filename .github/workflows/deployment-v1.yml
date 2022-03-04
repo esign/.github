@@ -21,7 +21,7 @@ on:
       github_sha:
         required: false
         type: string
-        default: "${{ GITHUB_SHA }}"
+        default: "$GITHUB_SHA"
     secrets:
       SSH_PRIVATE_KEY:
         required: true

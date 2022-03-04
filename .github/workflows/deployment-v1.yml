@@ -21,7 +21,7 @@ on:
       github_sha:
         required: false
         type: string
-        default: $GITHUB_SHA
+        default: "${{ GITHUB_SHA }}"
     secrets:
       SSH_PRIVATE_KEY:
         required: true
@@ -36,9 +36,9 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ inputs.branch }}
-      - name: Checkout commit ${{ inputs.github_sha }}
+      - name: Branch ${{ inputs.branch }} at commit ${{ inputs.github_sha }}
         run: |
-          git checkout ${{ inputs.github_sha }}
+          git checkout -b $GITHUB_RUN_ID-$GITHUB_RUN_NUMBER ${{ inputs.github_sha }}
       - name: Log revision
         run: |
           commit=$(git rev-parse HEAD)

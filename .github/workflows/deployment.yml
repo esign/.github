@@ -6,7 +6,7 @@ on:
       remote_project_folder:
         required: true
         type: string
-      post_deploy_script:
+      post_deploy_commands:
         required: false
         type: string
       ssh_host:
@@ -66,7 +66,7 @@ jobs:
         env:
           COMMANDS: |
             cd "${{ inputs.remote_project_folder }}"
-            bash ${{ inputs.post_deploy_script }}
+            ${{ inputs.post_deploy_commands }}
         uses: esign/.github/.github/actions/execute@v1
         with:
           host: ${{ inputs.ssh_host }}

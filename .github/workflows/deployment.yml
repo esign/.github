@@ -45,7 +45,7 @@ jobs:
       - name: "Create remote folder '${{ inputs.remote_project_folder }}' if it doesn't exist"
         env:
           COMMANDS: |
-            cd /\
+            cd /
             mkdir -p ${{ inputs.remote_project_folder }}; true
         uses: esign/.github/.github/actions/execute@v1
         with:
@@ -64,7 +64,7 @@ jobs:
       - name: Execute post deploy commands
         env:
           COMMANDS: |
-            cd "${{ inputs.remote_project_folder }}"\
+            cd "${{ inputs.remote_project_folder }}"
             ${{ inputs.post_deploy_commands }}
         uses: esign/.github/.github/actions/execute@v1
         with:

@@ -1,0 +1,36 @@
+name: Deployment
+
+on:
+  workflow_call:
+    inputs:
+      branch:
+        required: true
+        type: string
+      github_sha:
+        required: false
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch ${{ inputs.branch }}
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ inputs.branch }}
+          fetch-depth: 0
+      - name: Determine commit SHA
+        run: |
+          if [ ! -z "${{ inputs.github_sha }}" ]
+          then
+            echo "deploy_sha=${{ inputs.github_sha }}" >> $GITHUB_ENV
+          else
+            echo "deploy_sha=${{ github.sha }}" >> $GITHUB_ENV
+          fi
+      - name: "Checkout ${{ inputs.branch }} at commit ${{ env.deploy_sha }}"
+        run: |
+          git checkout ${{ env.deploy_sha }}
+      - name: Log revision
+        run: |
+          commit=$(git rev-parse HEAD)
+          echo "::notice::commit $commit"

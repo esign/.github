@@ -40,7 +40,7 @@ jobs:
         with:
           ref: ${{ inputs.branch }}
           fetch-depth: 0
-      - name: Determine local branch name & commit SHA
+      - name: Determine commit SHA
         run: |
           if [ ! -z "${{ inputs.github_sha }}" ]
           then
@@ -48,7 +48,6 @@ jobs:
           else
             echo "deploy_sha=${{ github.sha }}" >> $GITHUB_ENV
           fi
-          echo "local_branch_name=${{ github.run_id }}-${{ github.run_number }}" >> $GITHUB_ENV
       - name: "Checkout ${{ inputs.branch }} at commit ${{ env.deploy_sha }}"
         run: |
           git checkout ${{ env.deploy_sha }}
@@ -62,7 +61,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           name: id_rsa
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
-      - name: Create remote project folder if it doesn't exist
+      - name: "Create remote folder '${{ inputs.remote_project_folder }}' if it doesn't exist"
         env:
           TARGET_PATH: "/"
           TARGET_SCRIPT: "mkdir -p ${{ inputs.remote_project_folder }}; true"

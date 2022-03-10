@@ -56,7 +56,7 @@ jobs:
           user: ${{ inputs.ssh_user }}
           commands: ${{ env.COMMANDS }}
       - run: |
-          excludes=$(echo "${{ inputs.exclude_paths }}" | sed -r '1,$s/^(.*)$/--exclude \1/' | sed -z '1,$s/\n/ /g')
+          excludes=$(echo "${{ inputs.exclude_paths }}" | sed -r '1,$s/^(.+)$/--exclude \1/' | sed -z '1,$s/\n/ /g')
           echo "exclude_flags=$excludes" >> $GITHUB_ENV
       - name: "Upload local '${{ inputs.path_in_repository }}' to remote '${{ inputs.remote_project_folder }}'"
         uses: burnett01/rsync-deployments@5.2

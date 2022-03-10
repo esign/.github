@@ -72,7 +72,7 @@ jobs:
           user: ${{ inputs.ssh_user }}
           target_path: ${{ env.TARGET_PATH }}
           target_script: ${{ env.TARGET_SCRIPT }}
-      - name: Upload files to the webserver
+      - name: "Upload local '${{ inputs.path_in_repository }}' to remote '${{ inputs.remote_project_folder }}'"
         uses: burnett01/rsync-deployments@5.2
         with:
           switches: -azr --exclude '*.git*' --exclude "vendor" --exclude "node_modules" --exclude "resources/cache" --delete

@@ -7,7 +7,7 @@ on:
         required: true
         type: string
       post_deploy_script:
-        required: true
+        required: false
         type: string
       ssh_host:
         required: true
@@ -21,6 +21,10 @@ on:
       github_sha:
         required: false
         type: string
+      path_in_repository:
+        required: true
+        type: string
+        default: '.'
     secrets:
       SSH_PRIVATE_KEY:
         required: true
@@ -72,7 +76,7 @@ jobs:
         uses: burnett01/rsync-deployments@5.2
         with:
           switches: -azr --exclude '*.git*' --exclude "vendor" --exclude "node_modules" --exclude "resources/cache" --delete
-          path: .
+          path: ${{ inputs.path_in_repository }}
           remote_path: ${{ inputs.remote_project_folder }}
           remote_host: ${{ inputs.ssh_host }}
           remote_user: ${{ inputs.ssh_user }}

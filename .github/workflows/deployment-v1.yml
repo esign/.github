@@ -44,10 +44,10 @@ jobs:
             echo "deploy_sha=${{ github.sha }}" >> $GITHUB_ENV
           fi
           echo "local_branch_name=${{ github.run_id }}-${{ github.run_number }}" >> $GITHUB_ENV
-      - name: "Branch ${{ inputs.branch }} at commit ${{ env.deploy_sha }} to local branch ${{ env.local_branch_name }}"
+      - name: "Checkout ${{ inputs.branch }} at commit ${{ env.deploy_sha }}"
         run: |
           git checkout ${{ inputs.branch }}
-          git checkout -b ${{ env.local_branch_name }} ${{ env.deploy_sha }}
+          git checkout ${{ env.deploy_sha }}
       - name: Log revision
         run: |
           commit=$(git rev-parse HEAD)

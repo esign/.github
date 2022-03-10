@@ -15,4 +15,4 @@ runs:
   steps:
     - shell: bash
       run: |
-        ssh ${{ inputs.user }}@${{ inputs.host }} ${{ inputs.commands }}
+        ssh ${{ inputs.user }}@${{ inputs.host }} "${{ inputs.commands }}"

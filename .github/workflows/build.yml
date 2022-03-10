@@ -37,7 +37,7 @@ jobs:
         run: |
           commit_short_sha=$(git rev-parse --short HEAD)
           commit_msg=$(git log -1 --pretty=%B)
-          echo "::notice::commit $commit_short_sha $commit_msg"
+          echo "::notice::commit $commit_short_sha \"$commit_msg\""
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:

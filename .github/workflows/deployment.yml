@@ -57,7 +57,7 @@ jobs:
           commands: ${{ env.COMMANDS }}
       - run: |
           excludes=$(echo "${{ inputs.exclude_paths }}" | sed -r '1,$s/^(.*)$/--exclude \1 \\/')
-          echo "exclude_flags=$exclude" >> $GITHUB_ENV
+          echo "exclude_flags=$excludes" >> $GITHUB_ENV
       - name: "Upload local '${{ inputs.path_in_repository }}' to remote '${{ inputs.remote_project_folder }}'"
         uses: burnett01/rsync-deployments@5.2
         with:

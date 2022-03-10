@@ -19,6 +19,9 @@ on:
         required: false
         type: string
         default: '.'
+      exclude_paths:
+        required: false
+        type: string
       artifact:
         required: true
         type: string
@@ -52,10 +55,13 @@ jobs:
           host: ${{ inputs.ssh_host }}
           user: ${{ inputs.ssh_user }}
           commands: ${{ env.COMMANDS }}
+      - run: |
+          exclude_flags=$(echo "${{ inputs.exclude_paths }}" | sed -r '1,$s/^(.*)$/--exclude \1 \\/')
+          echo "exclude_flags=$exclude_flags" >> $GITHUB_ENV
       - name: "Upload local '${{ inputs.path_in_repository }}' to remote '${{ inputs.remote_project_folder }}'"
         uses: burnett01/rsync-deployments@5.2
         with:
-          switches: -azr --exclude '*.git*' --exclude "vendor" --exclude "node_modules" --exclude "resources/cache" --delete
+          switches: -azr --delete ${{ env.exclude_flags }}
           path: ${{ inputs.path_in_repository }}
           remote_path: ${{ inputs.remote_project_folder }}
           remote_host: ${{ inputs.ssh_host }}

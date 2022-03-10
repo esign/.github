@@ -38,7 +38,7 @@ jobs:
           commit_sha=$(git rev-parse HEAD)
           commit_msg=$(git log -1 --pretty=%B)
           echo "::notice::commit SHA $commit_sha"
-          echo "::notice::commit message \"$commit_sha\""
+          echo "::notice::commit message \"$commit_msg\""
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:

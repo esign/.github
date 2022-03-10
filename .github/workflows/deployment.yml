@@ -44,14 +44,15 @@ jobs:
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
       - name: "Create remote folder '${{ inputs.remote_project_folder }}' if it doesn't exist"
         env:
-          TARGET_PATH: "/"
-          TARGET_SCRIPT: "mkdir -p ${{ inputs.remote_project_folder }}; true"
-        uses: esign/.github/.github/actions/execute@master
+          COMMANDS: |
+            cd /
+            mkdir -p ${{ inputs.remote_project_folder }}; true
+        uses: esign/.github/.github/actions/execute@v1
         with:
           host: ${{ inputs.ssh_host }}
           user: ${{ inputs.ssh_user }}
           target_path: ${{ env.TARGET_PATH }}
-          target_script: ${{ env.TARGET_SCRIPT }}
+          commands: ${{ env.COMMANDS }}
       - name: "Upload local '${{ inputs.path_in_repository }}' to remote '${{ inputs.remote_project_folder }}'"
         uses: burnett01/rsync-deployments@5.2
         with:
@@ -61,13 +62,14 @@ jobs:
           remote_host: ${{ inputs.ssh_host }}
           remote_user: ${{ inputs.ssh_user }}
           remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
-#      - name: Build project on the webserver
-#        env:
-#          TARGET_PATH: "${{ inputs.remote_project_folder }}"
-#          TARGET_SCRIPT: "bash ${{ inputs.post_deploy_script }}"
-#        uses: esign/.github/.github/actions/execute@master
-#        with:
-#          host: ${{ inputs.ssh_host }}
-#          user: ${{ inputs.ssh_user }}
-#          target_path: ${{ env.TARGET_PATH }}
-#          target_script: ${{ env.TARGET_SCRIPT }}
+      - name: Execute post deploy commands
+        env:
+          COMMANDS: |
+            cd "${{ inputs.remote_project_folder }}"
+            bash ${{ inputs.post_deploy_script }}
+        uses: esign/.github/.github/actions/execute@v1
+        with:
+          host: ${{ inputs.ssh_host }}
+          user: ${{ inputs.ssh_user }}
+          commands: ${{ env.COMMANDS }}
+

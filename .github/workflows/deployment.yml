@@ -51,7 +51,6 @@ jobs:
         with:
           host: ${{ inputs.ssh_host }}
           user: ${{ inputs.ssh_user }}
-          target_path: ${{ env.TARGET_PATH }}
           commands: ${{ env.COMMANDS }}
       - name: "Upload local '${{ inputs.path_in_repository }}' to remote '${{ inputs.remote_project_folder }}'"
         uses: burnett01/rsync-deployments@5.2

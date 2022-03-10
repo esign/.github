@@ -35,8 +35,10 @@ jobs:
           git checkout ${{ env.deploy_sha }}
       - name: Log revision
         run: |
-          commit=$(git rev-parse HEAD)
-          echo "::notice::commit $commit"
+          commit_sha=$(git rev-parse HEAD)
+          commit_msg=$(git log -1 --pretty=%B)
+          echo "::notice::commit SHA $commit_sha"
+          echo "::notice::commit message \"$commit_sha\""
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:

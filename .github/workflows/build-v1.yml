@@ -9,6 +9,9 @@ on:
       github_sha:
         required: false
         type: string
+      artifact:
+        required: true
+        type: string
 
 jobs:
   build:
@@ -34,3 +37,8 @@ jobs:
         run: |
           commit=$(git rev-parse HEAD)
           echo "::notice::commit $commit"
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ inputs.artifact }}
+          path: .

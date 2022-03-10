@@ -1,0 +1,17 @@
+name: Deployment
+
+on:
+  workflow_call:
+    inputs:
+      artifact:
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete build artifact
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          name: ${{ inputs.artifact }}

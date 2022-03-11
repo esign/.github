@@ -1,5 +1,5 @@
 name: Deployment
-
+# TODO PHP version select
 on:
   workflow_call:
     inputs:
@@ -26,21 +26,88 @@ jobs:
           else
             echo "deploy_sha=${{ github.sha }}" >> $GITHUB_ENV
             echo "fetch_depth=1" >> $GITHUB_ENV
-          fi
+          fi"
       - name: Checkout branch ${{ inputs.branch }}
         uses: actions/checkout@v2
         with:
+          path: temp
           ref: ${{ inputs.branch }}
           fetch-depth: ${{ env.fetch_depth }}
       - name: "Checkout ${{ inputs.branch }} at commit ${{ env.deploy_sha }}"
         run: |
+          cd temp
           git checkout ${{ env.deploy_sha }}
+          cd ..
       - name: Log revision
         run: |
-          commit_sha=$(git rev-parse HEAD)
-          commit_short_sha=$(git rev-parse --short HEAD)
-          commit_msg=$(git log -1 --pretty=%B)
+          echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_ENV
+          echo "commit_short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "commit_msg=$(git log -1 --pretty=%B)" >> $GITHUB_ENV
           echo "::notice::commit $commit_short_sha \"$commit_msg\" https://github.com/${{ github.repository }}/commit/$commit_sha"
+      - name: Run pre build checks
+        run: |
+          # Environment file should be present
+          if [ ! -f "$FILE" ]; then
+            echo "::error::Environment file could not be found"
+            exit 1;
+          fi
+          
+          # Debug mode should be off
+          app_debug=$(cat .env.production | grep "APP_DEBUG=")
+          if [ "$app_debug" != "APP_DEBUG=false" ]; then
+            echo "::error::You shouldn't deploy with debug mode turned on";
+            exit 1;
+          fi
+      - name: Create release root
+        run: |
+          _date=$(date +%Y%m%d%H%M%S)
+          echo "release_name=$_date-${{ env.commit_short_sha }}-${{ github.run_id }}-${{ github.run_number }}" >> $GITHUB_ENV
+          mkdir releases
+          mv temp releases/${{ env.release_name }}
+      - name: Handle storage subfolders
+        run: |
+          mkdir -p persist/storage
+          
+          # storage/app
+          mv releases/${{ env.release_name }}/storage/app persist/storage/app
+          ln -s ../../../persist/storage/app releases/${{ env.release_name }}/storage/app
+          
+          # storage/logs
+          mv releases/${{ env.release_name }}/storage/logs persist/storage/logs
+          ln -s ../../../persist/storage/logs releases/${{ env.release_name }}/storage/logs
+          
+          # storage/media
+          mv releases/${{ env.release_name }}/storage/media persist/storage/media
+          ln -s ../../../persist/storage/media releases/${{ env.release_name }}/storage/media
+          
+          # storage/framework
+          mkdir persist/storage/framework
+          
+          # storage/framework/cache
+          mv releases/${{ env.release_name }}/storage/framework/cache persist/storage/framework/cache
+          ln -s ../../../../persist/storage/framework/cache releases/${{ env.release_name }}/storage/framework/cache
+          
+          # storage/framework/sessions
+          mv releases/${{ env.release_name }}/storage/framework/sessions persist/storage/framework/sessions
+          ln -s ../../../../persist/storage/framework/sessions releases/${{ env.release_name }}/storage/framework/sessions
+          
+          # storage/framework/testing
+          mv releases/${{ env.release_name }}/storage/framework/testing persist/storage/framework/testing
+          ln -s ../../../../persist/storage/framework/testing releases/${{ env.release_name }}/storage/framework/testing
+      - name: Install PHP dependencies
+        run: |
+          composer install
+      - name: Create Laravel symbolic links
+        run: |
+          php artisan storage:link --relative
+      - name: Build asets
+        run: |
+          nvm install
+          npm install
+          npm run prod
+      - name: Run tests
+        run: |
+          php artisan test
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:

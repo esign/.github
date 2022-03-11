@@ -17,19 +17,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout branch ${{ inputs.branch }}
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ inputs.branch }}
-          fetch-depth: 0
       - name: Determine commit SHA
         run: |
           if [ ! -z "${{ inputs.github_sha }}" ]
           then
             echo "deploy_sha=${{ inputs.github_sha }}" >> $GITHUB_ENV
+            echo "fetch_depth=0" >> $GITHUB_ENV
           else
             echo "deploy_sha=${{ github.sha }}" >> $GITHUB_ENV
+            echo "fetch_depth=1" >> $GITHUB_ENV
           fi
+      - name: Checkout branch ${{ inputs.branch }}
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ inputs.branch }}
+          fetch-depth: ${{ env.fetch_depth }}
       - name: "Checkout ${{ inputs.branch }} at commit ${{ env.deploy_sha }}"
         run: |
           git checkout ${{ env.deploy_sha }}

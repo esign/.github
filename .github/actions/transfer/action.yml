@@ -58,7 +58,7 @@ runs:
         remote_path: ${{ inputs.remote_dir }}
         remote_host: ${{ inputs.ssh_host }}
         remote_user: ${{ inputs.ssh_user }}
-        remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+        remote_key: ${{ inputs.ssh_private_key }}
     - name: Execute post transfer commands
       env:
         COMMANDS: |

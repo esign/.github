@@ -1,0 +1,71 @@
+name: transfer
+description: Transfer code to the remote
+inputs:
+  remote_dir:
+    description: Path to the directory on the remote to transfer files to
+    required: true
+  local_dir:
+    description: Path to the local directory to transfer files from
+    required: false
+    default: '.'
+  post_transfer_commands:
+    description: Commands to execute post-transfer (bash)
+    required: false
+  ssh_host:
+    description: SSH hostname
+    required: true
+  ssh_user:
+    description: SSH user
+    required: true
+  ssh_private_key:
+    description: SSH private key
+    required: true
+  ssh_known_hosts:
+    description: SSH hosts to trust
+    required: true
+  exclude_paths:
+    description: Paths to exclude from transfer, as accepted by rsync --exclude
+    required: false
+runs:
+  using: composite
+  steps:
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ inputs.ssh_private_key }}
+        name: id_rsa
+        known_hosts: ${{ inputs.ssh_known_hosts }}
+    - name: "Create remote directory '${{ inputs.remote_dir }}' if it doesn't exist"
+      env:
+        COMMANDS: |
+          cd /
+          mkdir -p ${{ inputs.remote_dir }}; true
+      uses: esign/.github/.github/actions/execute-v2@master
+      with:
+        host: ${{ inputs.ssh_host }}
+        user: ${{ inputs.ssh_user }}
+        commands: ${{ env.COMMANDS }}
+    - name: "Compose rsync exclude flags"
+      shell: bash
+      run: |
+        excludes=$(echo "${{ inputs.exclude_paths }}" | sed -r '1,$s/^(.+)$/--exclude \1/' | sed -z '1,$s/\n/ /g')
+        echo "exclude_flags=$excludes" >> $GITHUB_ENV
+    - name: "Upload local '${{ inputs.local_dir }}' to remote '${{ inputs.remote_dir }}'"
+      uses: burnett01/rsync-deployments@5.2
+      with:
+        switches: -azr --delete ${{ env.exclude_flags }}
+        path: ${{ inputs.local_dir }}
+        remote_path: ${{ inputs.remote_dir }}
+        remote_host: ${{ inputs.ssh_host }}
+        remote_user: ${{ inputs.ssh_user }}
+        remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+    - name: Execute post transfer commands
+      env:
+        COMMANDS: |
+          cd "${{ inputs.remote_dir }}"
+          ${{ inputs.post_transfer_commands }}
+      uses: esign/.github/.github/actions/execute-v2@master
+      with:
+        host: ${{ inputs.ssh_host }}
+        user: ${{ inputs.ssh_user }}
+        commands: ${{ env.COMMANDS }}

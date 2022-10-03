@@ -1,0 +1,30 @@
+name: Environment Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      github_sha:
+        description: 'Commit SHA to be deployed'
+        required: false
+        type: string
+
+jobs:
+  deployment:
+    uses: esign/.github/.github/workflows/deployment-v2.yml@master
+    with:
+      branch:
+      github_sha: ${{ github.event.inputs.github_sha }}
+      ssh_host:
+      ssh_user:
+      remote_dir:
+      local_dir: '.'
+      exclude_paths: |
+        vendor
+        node_modules
+        resources/cache
+        *.git*
+      post_deploy_commands: |
+        bash post_deployment_environment.sh
+    secrets:
+      SSH_PRIVATE_KEY: ${{ secrets.ENVIRONMENT_SSH_PRIVATE_KEY }}
+      KNOWN_HOSTS: ${{ secrets.ENVIRONMENT_KNOWN_HOSTS }}

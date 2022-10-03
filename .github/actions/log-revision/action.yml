@@ -1,0 +1,19 @@
+name: checkout
+description: Checkout a given revision on a given branch
+inputs:
+  branch:
+    description: branch to check out
+    required: true
+  github_sha:
+    description: sha of commit to check out (defaults to latest)
+    required: false
+runs:
+  using: composite
+  steps:
+    - name: Log revision
+      shell: bash
+      run: |
+        commit_sha=$(git rev-parse HEAD)
+        commit_short_sha=$(git rev-parse --short HEAD)
+        commit_msg=$(git log -1 --pretty=%B)
+        echo "::notice::commit $commit_short_sha \"$commit_msg\" https://github.com/${{ github.repository }}/commit/$commit_sha"

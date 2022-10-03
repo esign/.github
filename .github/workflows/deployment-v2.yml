@@ -1,0 +1,66 @@
+name: Deployment
+
+on:
+  workflow_call:
+    inputs:
+      branch:
+        description: Branch to check out
+        required: true
+        type: string
+      github_sha:
+        description: SHA of commit to check out (defaults to latest)
+        required: false
+        type: string
+      remote_dir:
+        description: Path to the directory on the remote to transfer files to
+        required: true
+        type: string
+      local_dir:
+        description: Path to the local directory to transfer files from
+        required: false
+        type: string
+        default: '.'
+      exclude_paths:
+        description: Paths to exclude from transfer, as accepted by rsync --exclude
+        required: false
+        type: string
+      post_deploy_commands:
+        description: Commands to execute post-deployment (bash)
+        required: true
+        type: string
+      ssh_host:
+        description: SSH hostname
+        required: true
+        type: string
+      ssh_user:
+        description: SSH user
+        required: true
+        type: string
+    secrets:
+      SSH_PRIVATE_KEY:
+        required: true
+      KNOWN_HOSTS:
+        required: true
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: esign/.github/.github/actions/checkout@master
+        with:
+          branch: ${{ inputs.branch }}
+          github_sha: $${{ inputs.github_sha }}
+      - name: Log revision
+        uses: esign/.github/.github/actions/log-revision@master
+      - name: Transfer
+        uses: esign/.github/.github/actions/transfer@master
+        with:
+          remote_dir: ${{ inputs.remote_dir }}
+          local_dir: ${{ inputs.local_dir }}
+          post_transfer_commands: ${{ inputs.post_deploy_commands }}
+          ssh_host: ${{ inputs.ssh_host }}
+          ssh_user: ${{ inputs.ssh_user }}
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh_known_hosts: ${{ secrets.KNOWN_HOSTS }}
+          exclude_paths: ${{ inputs.exclude_paths }}

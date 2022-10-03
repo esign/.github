@@ -46,11 +46,22 @@ jobs:
   deployment:
     runs-on: ubuntu-latest
     steps:
+      - name: Determine commit SHA
+        shell: bash
+        run: |
+          if [ ! -z "${{ inputs.github_sha }}" ]
+          then
+            echo "deploy_sha=${{ inputs.github_sha }}" >> $GITHUB_ENV
+            echo "fetch_depth=0" >> $GITHUB_ENV
+          else
+            echo "deploy_sha=${{ github.sha }}" >> $GITHUB_ENV
+            echo "fetch_depth=1" >> $GITHUB_ENV
+          fi
       - name: Checkout
         uses: esign/.github/.github/actions/checkout@master
         with:
           branch: ${{ inputs.branch }}
-          github_sha: $${{ inputs.github_sha }}
+          github_sha: ${{ env.deploy_sha }}
       - name: Log revision
         uses: esign/.github/.github/actions/log-revision@master
       - name: Transfer

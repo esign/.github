@@ -14,6 +14,10 @@ inputs:
   ssh_host:
     description: SSH hostname
     required: true
+  ssh_port:
+    description: SSH port number
+    required: false
+    default: '22'
   ssh_user:
     description: SSH user
     required: true
@@ -43,6 +47,7 @@ runs:
       uses: esign/.github/.github/actions/execute@v1
       with:
         host: ${{ inputs.ssh_host }}
+        port: ${{ inputs.ssh_port }}
         user: ${{ inputs.ssh_user }}
         commands: ${{ env.COMMANDS }}
     - name: "Compose rsync exclude flags"
@@ -57,6 +62,7 @@ runs:
         path: ${{ inputs.local_dir }}
         remote_path: ${{ inputs.remote_dir }}
         remote_host: ${{ inputs.ssh_host }}
+        remote_port: ${{ inputs.ssh_port }}
         remote_user: ${{ inputs.ssh_user }}
         remote_key: ${{ inputs.ssh_private_key }}
     - name: Execute post transfer commands
@@ -67,5 +73,6 @@ runs:
       uses: esign/.github/.github/actions/execute@v1
       with:
         host: ${{ inputs.ssh_host }}
+        port: ${{ inputs.ssh_port }}
         user: ${{ inputs.ssh_user }}
         commands: ${{ env.COMMANDS }}

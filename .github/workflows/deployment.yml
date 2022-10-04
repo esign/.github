@@ -32,6 +32,11 @@ on:
         description: SSH hostname
         required: true
         type: string
+      ssh_port:
+        description: SSH port number
+        required: true
+        type: number
+        default: 22
       ssh_user:
         description: SSH user
         required: true
@@ -71,6 +76,7 @@ jobs:
           local_dir: ${{ inputs.local_dir }}
           post_transfer_commands: ${{ inputs.post_deploy_commands }}
           ssh_host: ${{ inputs.ssh_host }}
+          ssh_port: ${{ inputs.ssh_port }}
           ssh_user: ${{ inputs.ssh_user }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh_known_hosts: ${{ secrets.KNOWN_HOSTS }}

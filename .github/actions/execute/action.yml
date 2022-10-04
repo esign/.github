@@ -10,11 +10,11 @@ inputs:
   target_path:
     description: 'path to run command from'
     required: true
-  target_script:
+  commands:
     description: 'commands to run'
     required: true
 runs:
   using: composite
   steps:
     - shell: bash
-      run: ssh ${{ inputs.user }}@${{ inputs.host }} "cd ${{ inputs.target_path }} && ${{ inputs.target_script }}"
+      run: ssh ${{ inputs.user }}@${{ inputs.host }} "cd ${{ inputs.target_path }} && ${{ inputs.commands }}"

@@ -40,7 +40,7 @@ runs:
         COMMANDS: |
           cd /
           mkdir -p ${{ inputs.remote_dir }}; true
-      uses: esign/.github/.github/actions/execute-v2@master
+      uses: esign/.github/.github/actions/execute@v1
       with:
         host: ${{ inputs.ssh_host }}
         user: ${{ inputs.ssh_user }}
@@ -64,7 +64,7 @@ runs:
         COMMANDS: |
           cd "${{ inputs.remote_dir }}"
           ${{ inputs.post_transfer_commands }}
-      uses: esign/.github/.github/actions/execute-v2@master
+      uses: esign/.github/.github/actions/execute@v1
       with:
         host: ${{ inputs.ssh_host }}
         user: ${{ inputs.ssh_user }}

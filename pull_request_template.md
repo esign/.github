@@ -23,6 +23,8 @@ Preview + link CMS
 
 ## Checklist:
 
+Vervolledig de checklist & verwijder opties die niet relevant zijn.
+
 - [ ] Mijn code voldoet aan de briefing
 - [ ] Ik heb mijn code gecontroleerd en eventuele spelfouten gecorrigeerd
 - [ ] Ik heb commentaar geplaatst waar nodig, vooral op moeilijk te begrijpen plaatsen

@@ -41,10 +41,12 @@ on:
         description: SSH user
         required: true
         type: string
+      known_hosts:
+        description: SSH hosts to trust
+        required: true
+        type: string
     secrets:
       SSH_PRIVATE_KEY:
-        required: true
-      KNOWN_HOSTS:
         required: true
 
 jobs:
@@ -79,5 +81,5 @@ jobs:
           ssh_port: ${{ inputs.ssh_port }}
           ssh_user: ${{ inputs.ssh_user }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh_known_hosts: ${{ secrets.KNOWN_HOSTS }}
+          ssh_known_hosts: ${{ inputs.known_hosts }}
           exclude_paths: ${{ inputs.exclude_paths }}

@@ -14,8 +14,9 @@ jobs:
     with:
       branch:
       github_sha: ${{ github.event.inputs.github_sha }}
-      ssh_host:
-      ssh_user:
+      ssh_host: ${{ vars.ENVIRONMENT_SSH_USER }}
+      ssh_user: ${{ vars.ENVIRONMENT_SSH_USER }}
+      known_hosts: ${{ secrets.ENVIRONMENT_KNOWN_HOSTS }}
       remote_dir:
       local_dir: '.'
       exclude_paths: |
@@ -27,4 +28,3 @@ jobs:
         bash post_deployment_environment.sh
     secrets:
       SSH_PRIVATE_KEY: ${{ secrets.ENVIRONMENT_SSH_PRIVATE_KEY }}
-      KNOWN_HOSTS: ${{ secrets.ENVIRONMENT_KNOWN_HOSTS }}

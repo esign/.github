@@ -12,19 +12,14 @@ jobs:
   deployment:
     uses: esign/.github/.github/workflows/deployment.yml@v1
     with:
-      branch:
+      branch: ${{ vars.ENVIRONMENT_BRANCH }}
       github_sha: ${{ github.event.inputs.github_sha }}
       ssh_host: ${{ vars.ENVIRONMENT_SSH_USER }}
       ssh_user: ${{ vars.ENVIRONMENT_SSH_USER }}
-      known_hosts: ${{ secrets.ENVIRONMENT_KNOWN_HOSTS }}
-      remote_dir:
-      local_dir: '.'
-      exclude_paths: |
-        vendor
-        node_modules
-        resources/cache
-        *.git*
-      post_deploy_commands: |
-        bash post_deployment_environment.sh
+      known_hosts: ${{ vars.ENVIRONMENT_KNOWN_HOSTS }}
+      remote_dir: ${{ vars.ENVIRONMENT_REMOTE_DIR }}
+      local_dir: ${{ vars.ENVIRONMENT_REMOTE_DIR  || '.'}}
+      exclude_paths: ${{ vars.ENVIRONMENT_EXCLUDING_PATHS }}
+      post_deploy_commands:  ${{ vars.ENVIRONMENT_DEPLOY_COMMANDS || 'bash post_deployment_environment.sh' }}
     secrets:
       SSH_PRIVATE_KEY: ${{ secrets.ENVIRONMENT_SSH_PRIVATE_KEY }}

@@ -18,7 +18,7 @@ jobs:
       ssh_user: ${{ vars.ENVIRONMENT_SSH_USER }}
       known_hosts: ${{ vars.ENVIRONMENT_KNOWN_HOSTS }}
       remote_dir: ${{ vars.ENVIRONMENT_REMOTE_DIR }}
-      local_dir: ${{ vars.ENVIRONMENT_REMOTE_DIR  || '.'}}
+      local_dir: ${{ vars.ENVIRONMENT_LOCAL_DIR  || '.'}}
       exclude_paths: ${{ vars.ENVIRONMENT_EXCLUDING_PATHS }}
       post_deploy_commands:  ${{ vars.ENVIRONMENT_DEPLOY_COMMANDS || 'bash post_deployment_environment.sh' }}
     secrets:

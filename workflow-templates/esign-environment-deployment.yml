@@ -25,6 +25,7 @@ jobs:
         *.git*
       post_deploy_commands: |
         bash post_deployment_environment.sh
+      php_version: '8.2'
     secrets:
       SSH_PRIVATE_KEY: ${{ secrets.ENVIRONMENT_SSH_PRIVATE_KEY }}
       KNOWN_HOSTS: ${{ secrets.ENVIRONMENT_KNOWN_HOSTS }}

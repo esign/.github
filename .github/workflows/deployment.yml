@@ -41,6 +41,10 @@ on:
         description: SSH user
         required: true
         type: string
+      php_version:
+        description: PHP version (minor)
+        required: true
+        type: string
     secrets:
       SSH_PRIVATE_KEY:
         required: true
@@ -69,6 +73,14 @@ jobs:
           github_sha: ${{ env.deploy_sha }}
       - name: Log revision
         uses: esign/.github/.github/actions/log-revision@v1
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ inputs.php_version }}
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
       - name: Transfer
         uses: esign/.github/.github/actions/transfer@v1
         with:

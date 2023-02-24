@@ -1,12 +1,5 @@
-name: checkout
-description: Checkout a given revision on a given branch
-inputs:
-  branch:
-    description: branch to check out
-    required: true
-  github_sha:
-    description: sha of commit to check out (defaults to latest)
-    required: false
+name: log-revision
+description: Log the currently checked out revision SHA
 runs:
   using: composite
   steps:

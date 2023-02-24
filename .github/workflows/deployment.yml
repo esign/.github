@@ -63,14 +63,14 @@ jobs:
             echo "fetch_depth=1" >> $GITHUB_ENV
           fi
       - name: Checkout
-        uses: esign/.github/.github/actions/checkout@master
+        uses: esign/.github/.github/actions/checkout@v1
         with:
           branch: ${{ inputs.branch }}
           github_sha: ${{ env.deploy_sha }}
       - name: Log revision
-        uses: esign/.github/.github/actions/log-revision@master
+        uses: esign/.github/.github/actions/log-revision@v1
       - name: Transfer
-        uses: esign/.github/.github/actions/transfer@master
+        uses: esign/.github/.github/actions/transfer@v1
         with:
           remote_dir: ${{ inputs.remote_dir }}
           local_dir: ${{ inputs.local_dir }}

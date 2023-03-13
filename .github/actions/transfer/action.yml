@@ -54,10 +54,7 @@ runs:
       shell: bash
       run: |
         excludes=$(echo "${{ inputs.exclude_paths }}" | sed -r '1,$s/^(.+)$/--exclude \1/' | sed -z '1,$s/\n/ /g')
-        echo $excludes
-        excludes2=$(echo "${{ inputs.exclude_paths }}" | sed -r '1,$s/^(.+)$/--exclude \1/' | tr '\n' ' ')
-        echo $excludes2
-        echo "exclude_flags=$excludes" >> $GITHUB_ENV
+        echo "exclude_flags=$(echo "$excludes" | tr '\n' ' ')" >> $GITHUB_ENV
     - name: "Upload local '${{ inputs.local_dir }}' to remote '${{ inputs.remote_dir }}'"
       uses: burnett01/rsync-deployments@5.2
       with:

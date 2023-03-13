@@ -82,5 +82,4 @@ jobs:
           ssh_user: ${{ inputs.ssh_user }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh_known_hosts: ${{ inputs.known_hosts }}
-          exclude_paths: >
-              ${{ inputs.exclude_paths }}
+          exclude_paths: ${{ inputs.exclude_paths }}

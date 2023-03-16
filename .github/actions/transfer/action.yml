@@ -53,12 +53,12 @@ runs:
     - name: "Compose rsync exclude flags"
       shell: bash
       run: |
-        excludes=$(echo "${{ inputs.exclude_paths }}" | sed -r '1,$s/^(.+)$/--exclude \1/' | sed -z '1,$s/\n/ /g')
+        excludes=$(echo "${{ inputs.exclude_paths }}" | sed -r '1,$s/^(.+)$/--exclude \1/' | sed -z '1,$s/\r\n/ /g')
         echo "exclude_flags=$excludes" >> $GITHUB_ENV
     - name: "Upload local '${{ inputs.local_dir }}' to remote '${{ inputs.remote_dir }}'"
       uses: burnett01/rsync-deployments@5.2
       with:
-        switches: -azr --delete $(echo "${{ env.exclude_flags }}" | tr '\n' ' ')
+        switches: -azr --delete ${{ env.exclude_flags }}
         path: ${{ inputs.local_dir }}
         remote_path: ${{ inputs.remote_dir }}
         remote_host: ${{ inputs.ssh_host }}

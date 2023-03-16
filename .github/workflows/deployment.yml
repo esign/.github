@@ -72,7 +72,7 @@ jobs:
       - name: Log revision
         uses: esign/.github/.github/actions/log-revision@v1
       - name: Transfer
-        uses: esign/.github/.github/actions/transfer@v1.1.9
+        uses: esign/.github/.github/actions/transfer@v1
         with:
           remote_dir: ${{ inputs.remote_dir }}
           local_dir: ${{ inputs.local_dir }}

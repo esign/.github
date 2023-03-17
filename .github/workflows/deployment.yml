@@ -90,13 +90,14 @@ jobs:
           fi
           if [ ! -z "${{ inputs.timeout_minutes }}" ]
           then
-            echo "timeout_minutes=$((${{ inputs.timeout_minutes }}))" >> $GITHUB_ENV
+            echo "::set-output name=timeout_minutes::$((${{ inputs.timeout_minutes }}))"
           else
-            echo "timeout_minutes=$((${{ inputs.timeout_minutes.default }}))" >> $GITHUB_ENV
+            echo "::set-output name=timeout_minutes::$((${{ inputs.timeout_minutes.default }}))"
           fi
   deployment:
+    needs: setup
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: ${{ needs.setup.outputs.timeout_minutes }}
     steps:
       - name: Checkout
         uses: esign/.github/.github/actions/checkout@v1

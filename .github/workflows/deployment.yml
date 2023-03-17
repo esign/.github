@@ -59,6 +59,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: ${{ inputs.timeout_minutes }}
     steps:
+      - name: Trim whitespace from variables
+        run: |
+          echo "::set-input name=ssh_host::${{ inputs.ssh_host.trim() }}"
       - name: Determine commit SHA
         shell: bash
         run: |
@@ -83,7 +86,7 @@ jobs:
           remote_dir: ${{ inputs.remote_dir }}
           local_dir: ${{ inputs.local_dir }}
           post_transfer_commands: ${{ inputs.post_deploy_commands }}
-          ssh_host: ${{ inputs.ssh_host.trim() }}
+          ssh_host: ${{ inputs.ssh_host }}
           ssh_port: ${{ inputs.ssh_port }}
           ssh_user: ${{ inputs.ssh_user }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}

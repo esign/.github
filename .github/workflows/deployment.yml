@@ -55,7 +55,7 @@ on:
         required: true
 
 jobs:
-  deployment:
+  setup:
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
@@ -94,6 +94,7 @@ jobs:
           else
             echo "deploy_sha=${{ inputs.timeout_minutes.default }}" >> $GITHUB_ENV
           fi
+  deployment:
     runs-on: ubuntu-latest
     timeout-minutes: ${{ env.timeout_minutes }}
     steps:

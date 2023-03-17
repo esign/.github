@@ -96,7 +96,7 @@ jobs:
           fi
   deployment:
     runs-on: ubuntu-latest
-    timeout-minutes: ${{ env.timeout_minutes }}
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: esign/.github/.github/actions/checkout@v1

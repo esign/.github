@@ -58,6 +58,15 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     timeout-minutes: 2
+    outputs:
+      branch: ${{ steps.outputs.branch }}
+      ssh_host: ${{ steps.outputs.ssh_host }}
+      ssh_user: ${{ steps.outputs.ssh_user }}
+      ssh_port: ${{ steps.outputs.ssh_port }}
+      deploy_sha: ${{ steps.outputs.deploy_sha }}
+      fetch_depth: ${{ steps.outputs.fetch_depth }}
+      local_dir: ${{ steps.outputs.local_dir }}
+      timeout_minutes: ${{ steps.outputs.timeout_minutes }}
     steps:
       - name: Trim whitespace from variables
         shell: bash

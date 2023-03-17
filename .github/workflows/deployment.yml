@@ -78,21 +78,21 @@ jobs:
           fi
           if [ ! -z "${{ inputs.ssh_port }}" ]
           then
-            echo "deploy_sha=${{ inputs.ssh_port }}" >> $GITHUB_ENV
+            echo "ssh_port=${{ inputs.ssh_port }}" >> $GITHUB_ENV
           else
-            echo "deploy_sha=${{ inputs.ssh_port.default }}" >> $GITHUB_ENV
+            echo "ssh_port=${{ inputs.ssh_port.default }}" >> $GITHUB_ENV
           fi
           if [ ! -z "${{ inputs.local_dir }}" ]
           then
-            echo "deploy_sha=${{ inputs.local_dir }}" >> $GITHUB_ENV
+            echo "local_dir=${{ inputs.local_dir }}" >> $GITHUB_ENV
           else
-            echo "deploy_sha=${{ inputs.local_dir.default }}" >> $GITHUB_ENV
+            echo "local_dir=${{ inputs.local_dir.default }}" >> $GITHUB_ENV
           fi
           if [ ! -z "${{ inputs.timeout_minutes }}" ]
           then
-            echo "deploy_sha=${{ inputs.timeout_minutes }}" >> $GITHUB_ENV
+            echo "timeout_minutes=${{ inputs.timeout_minutes }}" >> $GITHUB_ENV
           else
-            echo "deploy_sha=${{ inputs.timeout_minutes.default }}" >> $GITHUB_ENV
+            echo "timeout_minutes=${{ inputs.timeout_minutes.default }}" >> $GITHUB_ENV
           fi
   deployment:
     runs-on: ubuntu-latest
@@ -109,10 +109,10 @@ jobs:
         uses: esign/.github/.github/actions/transfer@development
         with:
           remote_dir: ${{ inputs.remote_dir }}
-          local_dir: ${{ inputs.local_dir }}
+          local_dir: ${{ env.local_dir }}
           post_transfer_commands: ${{ inputs.post_deploy_commands }}
           ssh_host: ${{ env.ssh_host }}
-          ssh_port: ${{ inputs.ssh_port }}
+          ssh_port: ${{ env.ssh_port }}
           ssh_user: ${{ env.ssh_user }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh_known_hosts: ${{ inputs.known_hosts }}

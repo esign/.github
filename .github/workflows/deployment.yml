@@ -60,13 +60,10 @@ jobs:
     timeout-minutes: 2
     outputs:
       branch: ${{ steps.set.outputs.branch }}
-      local_dir: ${{ steps.set.outputs.local_dir }}
       ssh_host: ${{ steps.set.outputs.ssh_host }}
       ssh_user: ${{ steps.set.outputs.ssh_user }}
-      ssh_port: ${{ steps.set.outputs.ssh_port }}
       deploy_sha: ${{ steps.set.outputs.deploy_sha }}
       fetch_depth: ${{ steps.set.outputs.fetch_depth }}
-      timeout_minutes: ${{ steps.set.outputs.timeout_minutes }}
     steps:
       - name: Set deployment variables
         id: set
@@ -84,18 +81,6 @@ jobs:
             echo "deploy_sha=${{ github.sha }}" >> $GITHUB_OUTPUT
             echo "fetch_depth=1" >> $GITHUB_OUTPUT
           fi
-          if [ ! -z "${{ inputs.ssh_port }}" ]
-          then
-            echo "ssh_port=${{ inputs.ssh_port }}" >> $GITHUB_OUTPUT
-          else
-            echo "ssh_port=${{ inputs.ssh_port.default }}" >> $GITHUB_OUTPUT
-          fi
-          if [ ! -z "${{ inputs.local_dir }}" ]
-          then
-            echo "local_dir=${{ inputs.local_dir }}" >> $GITHUB_OUTPUT
-          else
-            echo "local_dir=${{ inputs.local_dir.default }}" >> $GITHUB_OUTPUT
-          fi
   deployment:
     needs: setup
     runs-on: ubuntu-latest
@@ -112,10 +97,10 @@ jobs:
         uses: esign/.github/.github/actions/transfer@development
         with:
           remote_dir: ${{ inputs.remote_dir }}
-          local_dir: ${{ needs.setup.outputs.local_dir }}
+          local_dir: ${{ inputs.local_dir || inputs.local_dir.default }}
           post_transfer_commands: ${{ inputs.post_deploy_commands }}
           ssh_host: ${{ needs.setup.outputs.ssh_host }}
-          ssh_port: ${{ fromJSON(needs.setup.outputs.ssh_port) }}
+          ssh_port: ${{ inputs.ssh_port && fromJSON(inputs.ssh_port) || inputs.ssh_port.default }}
           ssh_user: ${{ needs.setup.outputs.ssh_user }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh_known_hosts: ${{ inputs.known_hosts }}

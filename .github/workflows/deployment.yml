@@ -75,9 +75,7 @@ jobs:
           echo "branch=$(echo "${{ inputs.branch }}" | xargs)" >> $GITHUB_OUTPUT
           echo "ssh_host=$(echo "${{ inputs.ssh_host }}" | xargs)" >> $GITHUB_OUTPUT
           echo "ssh_user=$(echo "${{ inputs.ssh_user }}" | xargs)" >> $GITHUB_OUTPUT
-          echo "${{ inputs.ssh_port.default }}"
-          echo "${{ inputs.local_dir.default }}"
-          echo "${{ inputs.timeout_minutes.default }}"
+
           if [ ! -z "${{ inputs.github_sha }}" ]
           then
             echo "deploy_sha=${{ inputs.github_sha }}" >> $GITHUB_OUTPUT
@@ -98,16 +96,10 @@ jobs:
           else
             echo "local_dir=${{ inputs.local_dir.default }}" >> $GITHUB_OUTPUT
           fi
-          if [ ! -z "${{ inputs.timeout_minutes }}" ]
-          then
-            echo "timeout_minutes=${{ inputs.timeout_minutes }}" >> $GITHUB_OUTPUT
-          else
-            echo "timeout_minutes=${{ inputs.timeout_minutes.default }}" >> $GITHUB_OUTPUT
-          fi
   deployment:
     needs: setup
     runs-on: ubuntu-latest
-    timeout-minutes: ${{ fromJSON(needs.setup.outputs.timeout_minutes) }}
+    timeout-minutes: ${{ inputs.timeout_minutes && fromJSON(inputs.timeout_minutes) || inputs.timeout_minutes.default }}
     steps:
       - name: Checkout
         uses: esign/.github/.github/actions/checkout@v1

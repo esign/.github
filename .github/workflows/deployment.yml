@@ -98,9 +98,9 @@ jobs:
           fi
           if [ ! -z "${{ inputs.timeout_minutes }}" ]
           then
-            echo "timeout_minutes=${{ inputs.timeout_minutes }}" >> $GITHUB_OUTPUT
+            echo "timeout_minutes=$((${{ inputs.timeout_minutes }}))" >> $GITHUB_OUTPUT
           else
-            echo "timeout_minutes=${{ inputs.timeout_minutes.default }}" >> $GITHUB_OUTPUT
+            echo "timeout_minutes=$((${{ inputs.timeout_minutes.default }}))" >> $GITHUB_OUTPUT
           fi
   deployment:
     needs: setup

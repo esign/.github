@@ -60,12 +60,12 @@ jobs:
     timeout-minutes: 2
     outputs:
       branch: ${{ steps.set.outputs.branch }}
+      local_dir: ${{ steps.set.outputs.local_dir }}
       ssh_host: ${{ steps.set.outputs.ssh_host }}
       ssh_user: ${{ steps.set.outputs.ssh_user }}
       ssh_port: ${{ steps.set.outputs.ssh_port }}
       deploy_sha: ${{ steps.set.outputs.deploy_sha }}
       fetch_depth: ${{ steps.set.outputs.fetch_depth }}
-      local_dir: ${{ steps.set.outputs.local_dir }}
       timeout_minutes: ${{ steps.set.outputs.timeout_minutes }}
     steps:
       - name: Set deployment variables
@@ -75,7 +75,9 @@ jobs:
           echo "branch=$(echo "${{ inputs.branch }}" | xargs)" >> $GITHUB_OUTPUT
           echo "ssh_host=$(echo "${{ inputs.ssh_host }}" | xargs)" >> $GITHUB_OUTPUT
           echo "ssh_user=$(echo "${{ inputs.ssh_user }}" | xargs)" >> $GITHUB_OUTPUT
-          
+          echo "${{ inputs.ssh_port.default }}"
+          echo "${{ inputs.local_dir.default }}"
+          echo "${{ inputs.timeout_minutes.default }}"
           if [ ! -z "${{ inputs.github_sha }}" ]
           then
             echo "deploy_sha=${{ inputs.github_sha }}" >> $GITHUB_OUTPUT

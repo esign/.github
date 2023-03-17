@@ -45,6 +45,11 @@ on:
         description: SSH hosts to trust
         required: true
         type: string
+      timeout_minutes:
+        description: The maximum number of minutes to let a job run before GitHub automatically cancels it
+        required: false
+        type: number
+        default: 30
     secrets:
       SSH_PRIVATE_KEY:
         required: true
@@ -52,6 +57,7 @@ on:
 jobs:
   deployment:
     runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.timeout_minutes }}
     steps:
       - name: Determine commit SHA
         shell: bash

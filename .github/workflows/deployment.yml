@@ -59,24 +59,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 2
     outputs:
-      branch: ${{ steps.outputs.branch }}
-      ssh_host: ${{ steps.outputs.ssh_host }}
-      ssh_user: ${{ steps.outputs.ssh_user }}
-      ssh_port: ${{ steps.outputs.ssh_port }}
-      deploy_sha: ${{ steps.outputs.deploy_sha }}
-      fetch_depth: ${{ steps.outputs.fetch_depth }}
-      local_dir: ${{ steps.outputs.local_dir }}
-      timeout_minutes: ${{ steps.outputs.timeout_minutes }}
+      branch: ${{ steps.set.outputs.branch }}
+      ssh_host: ${{ steps.set.outputs.ssh_host }}
+      ssh_user: ${{ steps.set.outputs.ssh_user }}
+      ssh_port: ${{ steps.set.outputs.ssh_port }}
+      deploy_sha: ${{ steps.set.outputs.deploy_sha }}
+      fetch_depth: ${{ steps.set.outputs.fetch_depth }}
+      local_dir: ${{ steps.set.outputs.local_dir }}
+      timeout_minutes: ${{ steps.set.outputs.timeout_minutes }}
     steps:
-      - name: Trim whitespace from variables
+      - name: Set deployment variables
+        id: set
         shell: bash
         run: |
           echo "branch=$(echo "${{ inputs.branch }}" | xargs)" >> $GITHUB_OUTPUT
           echo "ssh_host=$(echo "${{ inputs.ssh_host }}" | xargs)" >> $GITHUB_OUTPUT
           echo "ssh_user=$(echo "${{ inputs.ssh_user }}" | xargs)" >> $GITHUB_OUTPUT
-      - name: Determine commit SHA
-        shell: bash
-        run: |
+          
           if [ ! -z "${{ inputs.github_sha }}" ]
           then
             echo "deploy_sha=${{ inputs.github_sha }}" >> $GITHUB_OUTPUT

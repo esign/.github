@@ -60,8 +60,9 @@ jobs:
     timeout-minutes: ${{ inputs.timeout_minutes }}
     steps:
       - name: Trim whitespace from variables
+        shell: bash
         run: |
-          echo "::set-input name=ssh_host::${{ inputs.ssh_host.trim() }}"
+          echo "::set-input name=ssh_host::$(echo -e "${{ inputs.ssh_host }}" | xargs"
       - name: Determine commit SHA
         shell: bash
         run: |

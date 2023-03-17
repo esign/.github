@@ -62,9 +62,9 @@ jobs:
       - name: Trim whitespace from variables
         shell: bash
         run: |
-          branch=$(echo -e "${{ inputs.branch }}" | xargs) >> $GITHUB_ENV
-          ssh_host=$(echo -e "${{ inputs.ssh_host }}" | xargs) >> $GITHUB_ENV
-          ssh_user=$(echo -e "${{ inputs.ssh_user }}" | xargs) >> $GITHUB_ENV
+          echo "branch=$(echo "${{ inputs.branch }}" | xargs) >> $GITHUB_ENV
+          echo "ssh_host=$(echo "${{ inputs.ssh_host }}" | xargs) >> $GITHUB_ENV
+          echo "ssh_user=$(echo "${{ inputs.ssh_user }}" | xargs) >> $GITHUB_ENV
       - name: Determine commit SHA
         shell: bash
         run: |

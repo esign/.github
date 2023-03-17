@@ -97,10 +97,10 @@ jobs:
         uses: esign/.github/.github/actions/transfer@development
         with:
           remote_dir: ${{ inputs.remote_dir }}
-          local_dir: ${{ inputs.local_dir || inputs.local_dir.default }}
+          local_dir: ${{ inputs.local_dir.default }}
           post_transfer_commands: ${{ inputs.post_deploy_commands }}
           ssh_host: ${{ needs.setup.outputs.ssh_host }}
-          ssh_port: ${{ inputs.ssh_port && fromJSON(inputs.ssh_port) || inputs.ssh_port.default }}
+          ssh_port: ${{ inputs.ssh_port.default }}
           ssh_user: ${{ needs.setup.outputs.ssh_user }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh_known_hosts: ${{ inputs.known_hosts }}

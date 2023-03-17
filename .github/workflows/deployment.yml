@@ -19,7 +19,6 @@ on:
         description: Path to the local directory to transfer files from
         required: false
         type: string
-        default: '.'
       exclude_paths:
         description: Paths to exclude from transfer, as accepted by rsync --exclude
         required: false
@@ -36,7 +35,6 @@ on:
         description: SSH port number
         required: false
         type: string
-        default: 22
       ssh_user:
         description: SSH user
         required: true
@@ -49,7 +47,6 @@ on:
         description: The maximum number of minutes to let a job run before GitHub automatically cancels it
         required: false
         type: string
-        default: 30
     secrets:
       SSH_PRIVATE_KEY:
         required: true
@@ -84,7 +81,7 @@ jobs:
   deployment:
     needs: setup
     runs-on: ubuntu-latest
-    timeout-minutes: ${{ inputs.timeout_minutes && fromJSON(inputs.timeout_minutes) || inputs.timeout_minutes.default }}
+    timeout-minutes: ${{ inputs.timeout_minutes && fromJSON(inputs.timeout_minutes) || 30 }}
     steps:
       - name: Checkout
         uses: esign/.github/.github/actions/checkout@v1
@@ -97,10 +94,10 @@ jobs:
         uses: esign/.github/.github/actions/transfer@development
         with:
           remote_dir: ${{ inputs.remote_dir }}
-          local_dir: ${{ inputs.local_dir.default }}
+          local_dir: ${{ inputs.local_dir || '.' }}
           post_transfer_commands: ${{ inputs.post_deploy_commands }}
           ssh_host: ${{ needs.setup.outputs.ssh_host }}
-          ssh_port: ${{ inputs.ssh_port.default }}
+          ssh_port: ${{ inputs.ssh_port && fromJSON(inputs.ssh_port) || 22 }}
           ssh_user: ${{ needs.setup.outputs.ssh_user }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh_known_hosts: ${{ inputs.known_hosts }}

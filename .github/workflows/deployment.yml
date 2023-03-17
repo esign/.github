@@ -35,7 +35,7 @@ on:
       ssh_port:
         description: SSH port number
         required: false
-        type: number
+        type: string
         default: 22
       ssh_user:
         description: SSH user
@@ -48,7 +48,7 @@ on:
       timeout_minutes:
         description: The maximum number of minutes to let a job run before GitHub automatically cancels it
         required: false
-        type: number
+        type: string
         default: 30
     secrets:
       SSH_PRIVATE_KEY:
@@ -78,9 +78,9 @@ jobs:
           fi
           if [ ! -z "${{ inputs.ssh_port }}" ]
           then
-            echo "ssh_port=${{ inputs.ssh_port }}" >> $GITHUB_ENV
+            echo "ssh_port=$((${{ inputs.ssh_port }}))" >> $GITHUB_ENV
           else
-            echo "ssh_port=${{ inputs.ssh_port.default }}" >> $GITHUB_ENV
+            echo "ssh_port=$((${{ inputs.ssh_port.default }}))" >> $GITHUB_ENV
           fi
           if [ ! -z "${{ inputs.local_dir }}" ]
           then
@@ -90,13 +90,13 @@ jobs:
           fi
           if [ ! -z "${{ inputs.timeout_minutes }}" ]
           then
-            echo "timeout_minutes=${{ inputs.timeout_minutes }}" >> $GITHUB_ENV
+            echo "timeout_minutes=$((${{ inputs.timeout_minutes }}))" >> $GITHUB_ENV
           else
-            echo "timeout_minutes=${{ inputs.timeout_minutes.default }}" >> $GITHUB_ENV
+            echo "timeout_minutes=$((${{ inputs.timeout_minutes.default }}))" >> $GITHUB_ENV
           fi
   deployment:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: ${{ env.timeout_minutes }}
     steps:
       - name: Checkout
         uses: esign/.github/.github/actions/checkout@v1

@@ -53,13 +53,6 @@ on:
     secrets:
       SSH_PRIVATE_KEY:
         required: true
-    outputs:
-      local_dir:
-        value: ${{ inputs.local_dir || '.' }}
-      ssh_port:
-        value: ${{ inputs.ssh_port || 22 }}
-      timeout_minutes:
-        value: ${{ inputs.timeout_minutes || 30 }}
 
 jobs:
   deployment:

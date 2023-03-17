@@ -62,37 +62,37 @@ jobs:
       - name: Trim whitespace from variables
         shell: bash
         run: |
-          echo "branch=$(echo "${{ inputs.branch }}" | xargs)" >> $GITHUB_ENV
-          echo "ssh_host=$(echo "${{ inputs.ssh_host }}" | xargs)" >> $GITHUB_ENV
-          echo "ssh_user=$(echo "${{ inputs.ssh_user }}" | xargs)" >> $GITHUB_ENV
+          echo "branch=$(echo "${{ inputs.branch }}" | xargs)" >> $GITHUB_OUTPUT
+          echo "ssh_host=$(echo "${{ inputs.ssh_host }}" | xargs)" >> $GITHUB_OUTPUT
+          echo "ssh_user=$(echo "${{ inputs.ssh_user }}" | xargs)" >> $GITHUB_OUTPUT
       - name: Determine commit SHA
         shell: bash
         run: |
           if [ ! -z "${{ inputs.github_sha }}" ]
           then
-            echo "deploy_sha=${{ inputs.github_sha }}" >> $GITHUB_ENV
-            echo "fetch_depth=0" >> $GITHUB_ENV
+            echo "deploy_sha=${{ inputs.github_sha }}" >> $GITHUB_OUTPUT
+            echo "fetch_depth=0" >> $GITHUB_OUTPUT
           else
-            echo "deploy_sha=${{ github.sha }}" >> $GITHUB_ENV
-            echo "fetch_depth=1" >> $GITHUB_ENV
+            echo "deploy_sha=${{ github.sha }}" >> $GITHUB_OUTPUT
+            echo "fetch_depth=1" >> $GITHUB_OUTPUT
           fi
           if [ ! -z "${{ inputs.ssh_port }}" ]
           then
-            echo "ssh_port=$((${{ inputs.ssh_port }}))" >> $GITHUB_ENV
+            echo "ssh_port=$((${{ inputs.ssh_port }}))" >> $GITHUB_OUTPUT
           else
-            echo "ssh_port=$((${{ inputs.ssh_port.default }}))" >> $GITHUB_ENV
+            echo "ssh_port=$((${{ inputs.ssh_port.default }}))" >> $GITHUB_OUTPUT
           fi
           if [ ! -z "${{ inputs.local_dir }}" ]
           then
-            echo "local_dir=${{ inputs.local_dir }}" >> $GITHUB_ENV
+            echo "local_dir=${{ inputs.local_dir }}" >> $GITHUB_OUTPUT
           else
-            echo "local_dir=${{ inputs.local_dir.default }}" >> $GITHUB_ENV
+            echo "local_dir=${{ inputs.local_dir.default }}" >> $GITHUB_OUTPUT
           fi
           if [ ! -z "${{ inputs.timeout_minutes }}" ]
           then
-            echo "::set-output name=timeout_minutes::$((${{ inputs.timeout_minutes }}))"
+            echo "timeout_minutes=${{ inputs.timeout_minutes }}" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=timeout_minutes::$((${{ inputs.timeout_minutes.default }}))"
+            echo "timeout_minutes=${{ inputs.timeout_minutes.default }}" >> $GITHUB_OUTPUT
           fi
   deployment:
     needs: setup
@@ -102,19 +102,19 @@ jobs:
       - name: Checkout
         uses: esign/.github/.github/actions/checkout@v1
         with:
-          branch: ${{ env.branch }}
-          github_sha: ${{ env.deploy_sha }}
+          branch: ${{ needs.setup.outputs.branch }}
+          github_sha: ${{ needs.setup.outputs.deploy_sha }}
       - name: Log revision
         uses: esign/.github/.github/actions/log-revision@v1
       - name: Transfer
         uses: esign/.github/.github/actions/transfer@development
         with:
           remote_dir: ${{ inputs.remote_dir }}
-          local_dir: ${{ env.local_dir }}
+          local_dir: ${{ needs.setup.outputs.local_dir }}
           post_transfer_commands: ${{ inputs.post_deploy_commands }}
-          ssh_host: ${{ env.ssh_host }}
-          ssh_port: ${{ env.ssh_port }}
-          ssh_user: ${{ env.ssh_user }}
+          ssh_host: ${{ needs.setup.outputs.ssh_host }}
+          ssh_port: ${{ needs.setup.outputs.ssh_port }}
+          ssh_user: ${{ needs.setup.outputs.ssh_user }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh_known_hosts: ${{ inputs.known_hosts }}
           exclude_paths: ${{ inputs.exclude_paths }}

@@ -65,7 +65,6 @@ jobs:
           echo "branch=$(echo "${{ inputs.branch }}" | xargs)" >> $GITHUB_ENV
           echo "ssh_host=$(echo "${{ inputs.ssh_host }}" | xargs)" >> $GITHUB_ENV
           echo "ssh_user=$(echo "${{ inputs.ssh_user }}" | xargs)" >> $GITHUB_ENV
-          sleep 60
       - name: Determine commit SHA
         shell: bash
         run: |

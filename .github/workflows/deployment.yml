@@ -57,7 +57,7 @@ on:
 jobs:
   deployment:
     runs-on: ubuntu-latest
-    timeout-minutes: ${{ inputs.timeout_minutes }}
+    timeout-minutes: 2
     steps:
       - name: Trim whitespace from variables
         shell: bash
@@ -76,6 +76,27 @@ jobs:
             echo "deploy_sha=${{ github.sha }}" >> $GITHUB_ENV
             echo "fetch_depth=1" >> $GITHUB_ENV
           fi
+          if [ ! -z "${{ inputs.ssh_port }}" ]
+          then
+            echo "deploy_sha=${{ inputs.ssh_port }}" >> $GITHUB_ENV
+          else
+            echo "deploy_sha=${{ inputs.ssh_port.default }}" >> $GITHUB_ENV
+          fi
+          if [ ! -z "${{ inputs.local_dir }}" ]
+          then
+            echo "deploy_sha=${{ inputs.local_dir }}" >> $GITHUB_ENV
+          else
+            echo "deploy_sha=${{ inputs.local_dir.default }}" >> $GITHUB_ENV
+          fi
+          if [ ! -z "${{ inputs.timeout_minutes }}" ]
+          then
+            echo "deploy_sha=${{ inputs.timeout_minutes }}" >> $GITHUB_ENV
+          else
+            echo "deploy_sha=${{ inputs.timeout_minutes.default }}" >> $GITHUB_ENV
+          fi
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ env.timeout_minutes }}
+    steps:
       - name: Checkout
         uses: esign/.github/.github/actions/checkout@v1
         with:

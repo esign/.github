@@ -62,9 +62,9 @@ jobs:
       - name: Trim whitespace from variables
         shell: bash
         run: |
-          echo "::set-input name=branch::$(echo -e "${{ inputs.branch }}" | xargs)"
-          echo "::set-input name=ssh_host::$(echo -e "${{ inputs.ssh_host }}" | xargs)"
-          echo "::set-input name=ssh_user::$(echo -e "${{ inputs.ssh_user }}" | xargs)"
+          branch=$(echo -e "${{ inputs.branch }}" | xargs) >> $GITHUB_ENV
+          ssh_host=$(echo -e "${{ inputs.ssh_host }}" | xargs) >> $GITHUB_ENV
+          ssh_user=$(echo -e "${{ inputs.ssh_user }}" | xargs) >> $GITHUB_ENV
       - name: Determine commit SHA
         shell: bash
         run: |
@@ -79,7 +79,7 @@ jobs:
       - name: Checkout
         uses: esign/.github/.github/actions/checkout@v1
         with:
-          branch: ${{ inputs.branch }}
+          branch: ${{ env.branch }}
           github_sha: ${{ env.deploy_sha }}
       - name: Log revision
         uses: esign/.github/.github/actions/log-revision@v1
@@ -89,9 +89,9 @@ jobs:
           remote_dir: ${{ inputs.remote_dir }}
           local_dir: ${{ inputs.local_dir }}
           post_transfer_commands: ${{ inputs.post_deploy_commands }}
-          ssh_host: ${{ inputs.ssh_host }}
+          ssh_host: ${{ env.ssh_host }}
           ssh_port: ${{ inputs.ssh_port }}
-          ssh_user: ${{ inputs.ssh_user }}
+          ssh_user: ${{ env.ssh_user }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh_known_hosts: ${{ inputs.known_hosts }}
           exclude_paths: ${{ inputs.exclude_paths }}

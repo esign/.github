@@ -62,9 +62,9 @@ jobs:
       - name: Trim whitespace from variables
         shell: bash
         run: |
-          echo "::set-input name=branch::$(echo -e "${{ inputs.branch }}" | xargs"
-          echo "::set-input name=ssh_host::$(echo -e "${{ inputs.ssh_host }}" | xargs"
-          echo "::set-input name=ssh_user::$(echo -e "${{ inputs.ssh_user }}" | xargs"
+          echo "::set-input name=branch::$(echo -e "${{ inputs.branch }}" | xargs)"
+          echo "::set-input name=ssh_host::$(echo -e "${{ inputs.ssh_host }}" | xargs)"
+          echo "::set-input name=ssh_user::$(echo -e "${{ inputs.ssh_user }}" | xargs)"
       - name: Determine commit SHA
         shell: bash
         run: |

@@ -52,43 +52,32 @@ on:
         required: true
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    timeout-minutes: 2
-    outputs:
-      branch: ${{ steps.set.outputs.branch }}
-      ssh_host: ${{ steps.set.outputs.ssh_host }}
-      ssh_user: ${{ steps.set.outputs.ssh_user }}
-      deploy_sha: ${{ steps.set.outputs.deploy_sha }}
-      fetch_depth: ${{ steps.set.outputs.fetch_depth }}
-    steps:
-      - name: Set deployment variables
-        id: set
-        shell: bash
-        run: |
-          echo "branch=$(echo "${{ inputs.branch }}" | xargs)" >> $GITHUB_OUTPUT
-          echo "ssh_host=$(echo "${{ inputs.ssh_host }}" | xargs)" >> $GITHUB_OUTPUT
-          echo "ssh_user=$(echo "${{ inputs.ssh_user }}" | xargs)" >> $GITHUB_OUTPUT
-
-          if [ ! -z "${{ inputs.github_sha }}" ]
-          then
-            echo "deploy_sha=${{ inputs.github_sha }}" >> $GITHUB_OUTPUT
-            echo "fetch_depth=0" >> $GITHUB_OUTPUT
-          else
-            echo "deploy_sha=${{ github.sha }}" >> $GITHUB_OUTPUT
-            echo "fetch_depth=1" >> $GITHUB_OUTPUT
-          fi
   deployment:
     needs: setup
     runs-on: ubuntu-latest
     timeout-minutes: ${{ inputs.timeout_minutes && fromJSON(inputs.timeout_minutes) || 30 }}
     steps:
+      - name: Set deployment variables
+        shell: bash
+        run: |
+          echo "branch=$(echo "${{ inputs.branch }}" | xargs)" >> $GITHUB_ENV
+          echo "ssh_host=$(echo "${{ inputs.ssh_host }}" | xargs)" >> $GITHUB_ENV
+          echo "ssh_user=$(echo "${{ inputs.ssh_user }}" | xargs)" >> $GITHUB_ENV
+
+          if [ ! -z "${{ inputs.github_sha }}" ]
+          then
+            echo "deploy_sha=${{ inputs.github_sha }}" >> $GITHUB_ENV
+            echo "fetch_depth=0" >> $GITHUB_ENV
+          else
+            echo "deploy_sha=${{ github.sha }}" >> $GITHUB_ENV
+            echo "fetch_depth=1" >> $GITHUB_ENV
+          fi
       - name: Checkout
         uses: esign/.github/.github/actions/checkout@v1
         with:
-          branch: ${{ needs.setup.outputs.branch }}
-          github_sha: ${{ needs.setup.outputs.deploy_sha }}
-          fetch_depth: ${{ needs.setup.outputs.fetch_depth }}
+          branch: ${{ env.branch }}
+          github_sha: ${{ env.deploy_sha }}
+          fetch_depth: ${{ env.fetch_depth }}
       - name: Log revision
         uses: esign/.github/.github/actions/log-revision@v1
       - name: Transfer
@@ -97,9 +86,9 @@ jobs:
           remote_dir: ${{ inputs.remote_dir }}
           local_dir: ${{ inputs.local_dir || '.' }}
           post_transfer_commands: ${{ inputs.post_deploy_commands }}
-          ssh_host: ${{ needs.setup.outputs.ssh_host }}
+          ssh_host: ${{ env.ssh_host }}
           ssh_port: ${{ inputs.ssh_port && fromJSON(inputs.ssh_port) || 22 }}
-          ssh_user: ${{ needs.setup.outputs.ssh_user }}
+          ssh_user: ${{ env.ssh_user }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh_known_hosts: ${{ inputs.known_hosts }}
           exclude_paths: ${{ inputs.exclude_paths }}

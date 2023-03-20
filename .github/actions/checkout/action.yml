@@ -7,6 +7,10 @@ inputs:
   github_sha:
     description: SHA of commit to check out (defaults to latest)
     required: false
+  fetch_depth:
+    description: Set fetch-depth 0 to fetch all history for all branches and tags.
+    type: number
+    required: false
 runs:
   using: composite
   steps:

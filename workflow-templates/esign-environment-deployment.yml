@@ -14,12 +14,15 @@ jobs:
     with:
       branch: ${{ vars.ENVIRONMENT_BRANCH }}
       github_sha: ${{ github.event.inputs.github_sha }}
-      ssh_host: ${{ vars.ENVIRONMENT_SSH_USER }}
+      ssh_host: ${{ vars.ENVIRONMENT_SSH_HOST }}
       ssh_user: ${{ vars.ENVIRONMENT_SSH_USER }}
-      known_hosts: ${{ vars.ENVIRONMENT_KNOWN_HOSTS }}
+      ssh_port: ${{ vars.ENVIRONMENT_SSH_PORT }}
       remote_dir: ${{ vars.ENVIRONMENT_REMOTE_DIR }}
-      local_dir: ${{ vars.ENVIRONMENT_LOCAL_DIR  || '.'}}
+      local_dir: ${{ vars.ENVIRONMENT_LOCAL_DIR }}
       exclude_paths: ${{ vars.ENVIRONMENT_EXCLUDING_PATHS }}
-      post_deploy_commands:  ${{ vars.ENVIRONMENT_DEPLOY_COMMANDS || 'bash post_deployment_environment.sh' }}
+      post_deploy_commands: ${{ vars.ENVIRONMENT_DEPLOY_COMMANDS || 'bash post_deployment_environment.sh' }}
+      known_hosts: ${{ vars.ENVIRONMENT_KNOWN_HOSTS }}
+      timeout_minutes: ${{ vars.ENVIRONMENT_TIMEOUT_MINUTES }}
     secrets:
-      SSH_PRIVATE_KEY: ${{ secrets.ENVIRONMENT_SSH_PRIVATE_KEY }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+

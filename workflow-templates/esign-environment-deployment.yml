@@ -1,5 +1,7 @@
 name: Environment Deployment
 
+concurrency: environment_deployment
+
 on:
   workflow_dispatch:
     inputs:

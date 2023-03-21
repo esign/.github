@@ -19,7 +19,6 @@ on:
         description: Path to the local directory to transfer files from
         required: false
         type: string
-        default: '.'
       exclude_paths:
         description: Paths to exclude from transfer, as accepted by rsync --exclude
         required: false
@@ -35,8 +34,7 @@ on:
       ssh_port:
         description: SSH port number
         required: false
-        type: number
-        default: 22
+        type: string
       ssh_user:
         description: SSH user
         required: true
@@ -45,6 +43,10 @@ on:
         description: SSH hosts to trust
         required: true
         type: string
+      timeout_minutes:
+        description: The maximum number of minutes to let a job run before GitHub automatically cancels it
+        required: false
+        type: string
     secrets:
       SSH_PRIVATE_KEY:
         required: true
@@ -52,10 +54,15 @@ on:
 jobs:
   deployment:
     runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.timeout_minutes && fromJSON(inputs.timeout_minutes) || 30 }}
     steps:
-      - name: Determine commit SHA
+      - name: Set deployment variables
         shell: bash
         run: |
+          echo "branch=$(echo "${{ inputs.branch }}" | xargs)" >> $GITHUB_ENV
+          echo "ssh_host=$(echo "${{ inputs.ssh_host }}" | xargs)" >> $GITHUB_ENV
+          echo "ssh_user=$(echo "${{ inputs.ssh_user }}" | xargs)" >> $GITHUB_ENV
+
           if [ ! -z "${{ inputs.github_sha }}" ]
           then
             echo "deploy_sha=${{ inputs.github_sha }}" >> $GITHUB_ENV
@@ -67,19 +74,20 @@ jobs:
       - name: Checkout
         uses: esign/.github/.github/actions/checkout@v1
         with:
-          branch: ${{ inputs.branch }}
+          branch: ${{ env.branch }}
           github_sha: ${{ env.deploy_sha }}
+          fetch_depth: ${{ env.fetch_depth }}
       - name: Log revision
         uses: esign/.github/.github/actions/log-revision@v1
       - name: Transfer
         uses: esign/.github/.github/actions/transfer@v1
         with:
           remote_dir: ${{ inputs.remote_dir }}
-          local_dir: ${{ inputs.local_dir }}
+          local_dir: ${{ inputs.local_dir || '.' }}
           post_transfer_commands: ${{ inputs.post_deploy_commands }}
-          ssh_host: ${{ inputs.ssh_host }}
-          ssh_port: ${{ inputs.ssh_port }}
-          ssh_user: ${{ inputs.ssh_user }}
+          ssh_host: ${{ env.ssh_host }}
+          ssh_port: ${{ inputs.ssh_port && fromJSON(inputs.ssh_port) || 22 }}
+          ssh_user: ${{ env.ssh_user }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh_known_hosts: ${{ inputs.known_hosts }}
           exclude_paths: ${{ inputs.exclude_paths }}

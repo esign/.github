@@ -27,4 +27,3 @@ jobs:
       timeout_minutes: ${{ vars.ENVIRONMENT_TIMEOUT_MINUTES }}
     secrets:
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-

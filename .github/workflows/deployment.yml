@@ -3,10 +3,6 @@ name: Deployment
 on:
   workflow_call:
     inputs:
-      environment:
-        description: What environment you want to deploy
-        type: string
-        default: 'staging'
       branch:
         description: Branch to check out
         required: true

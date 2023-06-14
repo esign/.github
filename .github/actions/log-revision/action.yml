@@ -1,7 +1,7 @@
 name: log-revision
 description: Log the currently checked out revision SHA
 runs:
-  shell: bash
+  using: composite
   steps:
     - name: Log revision
       shell: bash

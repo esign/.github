@@ -1,20 +1,17 @@
 name: Setup Composer
 description: Run composer install
 runs:
+  using: composite
   steps:
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
 
-    - name: Get Composer Cache Directory
-      id: composer-cache
-      run: |
-        echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
     - uses: actions/cache@v3
       with:
-        path: ${{ steps.composer-cache.outputs.dir }}
+        path: /tmp/composer-cache
         key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-composer-
+        restore-keys: ${{ runner.os }}-composer-
 
     - name: Run composer install
+      shell: bash
       run: composer install

@@ -1,6 +1,9 @@
 name: transfer
 description: Transfer code to the remote
 inputs:
+  environment:
+    description: What environment you want to deploy
+    type: string
   remote_dir:
     description: Path to the directory on the remote to transfer files to
     required: true
@@ -76,3 +79,8 @@ runs:
         port: ${{ inputs.ssh_port }}
         user: ${{ inputs.ssh_user }}
         commands: ${{ env.COMMANDS }}
+    - name: Run npm
+      uses: esign/.github/.github/actions/node@feature/caches
+    - name: Run composer
+      uses: esign/.github/.github/actions/php@feature/caches
+

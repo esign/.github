@@ -80,11 +80,11 @@ runs:
         user: ${{ inputs.ssh_user }}
         commands: ${{ env.COMMANDS }}
     - name: Run npm
-      uses: esign/.github/.github/actions/node
+      uses: esign/.github/.github/actions/node@development
     - name: Run composer
-      uses: esign/.github/.github/actions/php
+      uses: esign/.github/.github/actions/php@development
     - name: Setup laravel application
-      uses: esign/.github/.github/actions/laravel
+      uses: esign/.github/.github/actions/laravel@development
         with:
           environment: ${{ inputs.environment }}
 

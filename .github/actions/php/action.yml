@@ -8,12 +8,16 @@ runs:
       with:
         php-version: '8.1' #dynamic php version
 
+    - name: Get Composer Cache Directory
+      id: composer-cache
+      run: |
+        echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
     - uses: actions/cache@v3
       with:
-        path: /tmp/composer-cache
+        path: ${{ steps.composer-cache.outputs.dir }}
         key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-        restore-keys: ${{ runner.os }}-composer-
+        restore-keys: |
+          ${{ runner.os }}-composer-
 
     - name: Run composer install
-      shell: bash
       run: composer install

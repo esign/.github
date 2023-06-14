@@ -7,8 +7,7 @@ runs:
       uses: actions/setup-node@v3
       with:
         node-version-file: '.nvmrc'
-        cache: 'npm'      
-        cache-dependency-path: '**/package-lock.json'
+        cache: 'npm'
 
     - name: Install npm dependencies, ignoring scripts as we're rebuilding next
       shell: bash

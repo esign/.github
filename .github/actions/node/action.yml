@@ -1,9 +1,5 @@
 name: Node
 description: Run npm
-inputs:
-  target_path:
-    description: 'path to run command from'
-    required: true
 runs:
   using: composite
   steps:
@@ -12,7 +8,7 @@ runs:
       with:
         node-version-file: '.nvmrc'
         cache: 'npm'      
-        cache-dependency-path: ${{ inputs.target_path }}
+        cache-dependency-path: subdir/package-lock.json
 
     - name: Install npm dependencies, ignoring scripts as we're rebuilding next
       shell: bash

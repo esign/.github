@@ -20,4 +20,5 @@ runs:
           ${{ runner.os }}-composer-
 
     - name: Run composer install
+      shell: bash
       run: composer install

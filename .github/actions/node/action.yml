@@ -1,6 +1,7 @@
 name: Node
 description: Run npm
 runs:
+  using: composite
   steps:
     - name: Run npm
       uses: actions/setup-node@v3

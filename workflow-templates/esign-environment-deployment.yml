@@ -12,7 +12,7 @@ on:
 
 jobs:
   deployment:
-    uses: esign/.github/.github/workflows/deployment.yml@v1
+    uses: esign/.github/.github/workflows/deployment.yml@development
     with:
       branch: ${{ vars.ENVIRONMENT_BRANCH }}
       github_sha: ${{ github.event.inputs.github_sha }}

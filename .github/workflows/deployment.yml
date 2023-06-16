@@ -72,13 +72,13 @@ jobs:
             echo "fetch_depth=1" >> $GITHUB_ENV
           fi
       - name: Checkout
-        uses: esign/.github/.github/actions/checkout@v1
+        uses: esign/.github/.github/actions/checkout@development
         with:
           branch: ${{ env.branch }}
           github_sha: ${{ env.deploy_sha }}
           fetch_depth: ${{ env.fetch_depth }}
       - name: Log revision
-        uses: esign/.github/.github/actions/log-revision@v1
+        uses: esign/.github/.github/actions/log-revision@development
       - name: Transfer
         uses: esign/.github/.github/actions/transfer@development
         with:

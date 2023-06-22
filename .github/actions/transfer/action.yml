@@ -73,6 +73,7 @@ runs:
       shell: bash
       run: |
         cd "${{ inputs.remote_dir }}"
+        echo ".env.${{ inputs.environment }}"
         cp ".env.${{ inputs.environment }}" .env
 
     - name: Run npm install

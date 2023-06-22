@@ -72,7 +72,7 @@ runs:
     - name: Setup environment
       shell: bash
       run: |
-        cp ${{ inputs.remote_dir }}/.env.${{ inputs.environment }} ${{ inputs.remote_dir }}/.env
+        cp "${{ inputs.remote_dir }}/.env.${{ inputs.environment }}" "${{ inputs.remote_dir }}/.env"
 
     - name: Run npm install
       uses: esign/.github/.github/actions/node@development

@@ -11,9 +11,6 @@ inputs:
     description: Path to the local directory to transfer files from
     required: false
     default: '.'
-  post_transfer_commands:
-    description: Commands to execute post-transfer (bash)
-    required: false
   ssh_host:
     description: SSH hostname
     required: true
@@ -42,6 +39,7 @@ runs:
         key: ${{ inputs.ssh_private_key }}
         name: id_rsa
         known_hosts: ${{ inputs.ssh_known_hosts }}
+
     - name: "Create remote directory '${{ inputs.remote_dir }}' if it doesn't exist"
       env:
         COMMANDS: |
@@ -53,11 +51,13 @@ runs:
         port: ${{ inputs.ssh_port }}
         user: ${{ inputs.ssh_user }}
         commands: ${{ env.COMMANDS }}
+
     - name: "Compose rsync exclude flags"
       shell: bash
       run: |
         excludes=$(echo "${{ inputs.exclude_paths }}" | sed -r '1,$s/^(.+)$/--exclude \1/' | sed -z '1,$s/\r\n/ /g')
         echo "exclude_flags=$excludes" >> $GITHUB_ENV
+
     - name: "Upload local '${{ inputs.local_dir }}' to remote '${{ inputs.remote_dir }}'"
       uses: burnett01/rsync-deployments@5.2
       with:
@@ -68,19 +68,23 @@ runs:
         remote_port: ${{ inputs.ssh_port }}
         remote_user: ${{ inputs.ssh_user }}
         remote_key: ${{ inputs.ssh_private_key }}
-    - name: Execute post transfer commands
-      env:
-        COMMANDS: |
-          cd "${{ inputs.remote_dir }}"
-          ${{ inputs.post_transfer_commands }}
+
       uses: esign/.github/.github/actions/execute@development
       with:
         host: ${{ inputs.ssh_host }}
         port: ${{ inputs.ssh_port }}
         user: ${{ inputs.ssh_user }}
         commands: ${{ env.COMMANDS }}
-    - name: Run npm
+
+    - name: Setup environment
+      shell: bash
+      run: |
+        cd "${{ inputs.remote_dir }}"
+        cp .env.${{ inputs.environment }} .env
+
+    - name: Run npm install
       uses: esign/.github/.github/actions/node@development
-    - name: Run composer
+
+    - name: Run composer install
       uses: esign/.github/.github/actions/php@development
 

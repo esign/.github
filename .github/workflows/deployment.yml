@@ -7,6 +7,10 @@ on:
         description: Branch to check out
         required: true
         type: string
+      environment:
+        description: Environment
+        required: true
+        type: string
       github_sha:
         description: SHA of commit to check out (defaults to latest)
         required: false
@@ -22,10 +26,6 @@ on:
       exclude_paths:
         description: Paths to exclude from transfer, as accepted by rsync --exclude
         required: false
-        type: string
-      post_deploy_commands:
-        description: Commands to execute post-deployment (bash)
-        required: true
         type: string
       ssh_host:
         description: SSH hostname
@@ -84,10 +84,10 @@ jobs:
         with:
           remote_dir: ${{ inputs.remote_dir }}
           local_dir: ${{ inputs.local_dir || '.' }}
-          post_transfer_commands: ${{ inputs.post_deploy_commands }}
           ssh_host: ${{ env.ssh_host }}
           ssh_port: ${{ inputs.ssh_port && fromJSON(inputs.ssh_port) || 22 }}
           ssh_user: ${{ env.ssh_user }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh_known_hosts: ${{ inputs.known_hosts }}
           exclude_paths: ${{ inputs.exclude_paths }}
+          environment: ${{ inputs.environment }}

@@ -69,10 +69,17 @@ runs:
         remote_user: ${{ inputs.ssh_user }}
         remote_key: ${{ inputs.ssh_private_key }}
 
-    - name: Setup environment
-      shell: bash
-      run: |
-        cp "${{ inputs.remote_dir }}/.env.${{ inputs.environment }}" "${{ inputs.remote_dir }}/.env"
+    - name: "Setup '${{ inputs.environment }}' environment"
+      env:
+        COMMANDS: |
+          cd "${{ inputs.remote_dir }}"
+          cp ".env.${{ inputs.environment }}" .env
+      uses: esign/.github/.github/actions/execute@development
+      with:
+        host: ${{ inputs.ssh_host }}
+        port: ${{ inputs.ssh_port }}
+        user: ${{ inputs.ssh_user }}
+        commands: ${{ env.COMMANDS }}
 
     - name: Run npm install
       uses: esign/.github/.github/actions/node@development

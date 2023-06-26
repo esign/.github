@@ -6,7 +6,7 @@ runs:
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.1' #dynamic php version
+        php-version: '8.1' #TODO dynamic php version https://github.com/shivammathur/setup-php#php-version-file-optional
 
     - name: Get Composer Cache Directory
       shell: bash

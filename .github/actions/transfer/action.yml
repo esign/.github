@@ -73,7 +73,21 @@ runs:
       env:
         COMMANDS: |
           cd "${{ inputs.remote_dir }}"
-          cp ".env.${{ inputs.environment }}" .env
+          echo "[$(date +"%T")] Removing old codebase backup. This may take a minute ..."
+          rm -rf ../previous
+
+          echo "[$(date +"%T")] Removing /deploy/static..."
+          rm -rf static
+
+          mkdir ../persist 2>/dev/null; true
+
+          rsync -a --ignore-existing ./storage/ ../persist/storage/
+
+          rm -rf storage
+
+          ln -fs ../persist/storage .
+
+          mv ".env.${{ inputs.environment }}" .env
       uses: esign/.github/.github/actions/execute@development
       with:
         host: ${{ inputs.ssh_host }}
@@ -87,3 +101,34 @@ runs:
     - name: Run composer install
       uses: esign/.github/.github/actions/php@development
 
+    - name: "Create project symlinks"
+      env:
+        COMMANDS: |
+          cd "${{ inputs.remote_dir }}"
+          php artisan storage:link --relative
+          php artisan route:clear
+          php artisan cache:clear
+          php artisan config:clear
+          php artisan test
+          echo "[$(date +"%T")] Copying codebase. This may take a minute..."
+          rsync -a . ../new --exclude node_modules --exclude resources/assets
+
+          rm -f ../www/index.html
+
+          rm -r ../www
+
+          mv -n ../src ../previous 2>/dev/null; true
+
+          mv -n ../new ../src
+
+          rm -f ../persist/storage/framework/views/*
+
+          ln -fs ./src/public ../www
+
+          cp .crontab ../.crontab
+      uses: esign/.github/.github/actions/execute@development
+      with:
+        host: ${{ inputs.ssh_host }}
+        port: ${{ inputs.ssh_port }}
+        user: ${{ inputs.ssh_user }}
+        commands: ${{ env.COMMANDS }}

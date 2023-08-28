@@ -28,8 +28,8 @@ runs:
       id: execute
       shell: bash
       run: |
-        stdout=$(ssh ssh://${{ inputs.user }}@${{ inputs.host }}:${{ inputs.port }} "cd ${{ inputs.target_path }} && ${{ inputs.commands }}")
+        sshout=$(ssh ssh://${{ inputs.user }}@${{ inputs.host }}:${{ inputs.port }} "cd ${{ inputs.target_path }} && ${{ inputs.commands }}")
         EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
         echo "stdout<<$EOF" >> $GITHUB_OUTPUT
-        echo "$stdout" >> $GITHUB_OUTPUT
+        echo "$sshout" >> $GITHUB_OUTPUT
         echo "$EOF" >> $GITHUB_OUTPUT

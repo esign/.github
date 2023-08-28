@@ -99,15 +99,14 @@ jobs:
       - id: compose-diff
         name: Compose diff
         shell: bash
-        with:
-          old_sha: ${{ steps.read-server-revision.stdout }}
-          new_sha: ${{ steps.log-deployment-revision.commit_sha }}
         run: |
+          old_sha="${{ steps.read-server-revision.stdout }}"
+          new_sha="${{ steps.log-deployment-revision.commit_sha }}"
           paths=
           
-          if [ "${{ inputs.scratch_deploy }}" = false ] && [ ! -z "${{ inputs.old_sha }}" ]
+          if [ "${{ inputs.scratch_deploy }}" = false ] && [ ! -z $old_sha ]
           then
-            paths=git diff "${{ inputs.old_sha }} ${{ inputs.new_sha }}"    
+            paths=git diff "$old_sha" "$new_sha"  
           fi
         
           echo "paths=$paths" >> $GITHUB_OUTPUT

@@ -101,7 +101,7 @@ jobs:
           target_path: ${{ inputs.remote_dir }}
           commands: |
             revision=
-            revision=$(cat ./.revision || true)
+            revision=$(cat .revision || true)
             echo "$revision"
       - id: compose-diff
         name: Compose diff

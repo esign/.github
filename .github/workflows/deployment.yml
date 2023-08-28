@@ -106,8 +106,8 @@ jobs:
         name: Compose diff
         shell: bash
         run: |
-          old_sha="${{ steps.read-server-revision.stdout }}"
-          new_sha="${{ steps.log-deployment-revision.commit_sha }}"
+          old_sha="${{ steps.read-server-revision.outputs.stdout }}"
+          new_sha="${{ steps.log-deployment-revision.outputs.commit_sha }}"
           paths=
           
           if [ "${{ inputs.scratch_deploy }}" = false ] && [ ! -z $old_sha ]
@@ -126,7 +126,7 @@ jobs:
           ssh_port: ${{ inputs.ssh_port && fromJSON(inputs.ssh_port) || 22 }}
           ssh_user: ${{ env.ssh_user }}
           exclude_paths: ${{ inputs.exclude_paths }}
-          include_paths: ${{ steps.compose-diff.paths }}
+          include_paths: ${{ steps.compose-diff.outputs.paths }}
       - name: Write server revision
         uses: esign/.github/.github/actions/execute@feature/diff-deploy
         with:
@@ -134,4 +134,4 @@ jobs:
           port: ${{ inputs.ssh_port }}
           user: ${{ inputs.ssh_user }}
           commands: |
-            echo "${{ steps.log-deployment-revision.commit_sha }}" > .revision
+            echo "${{ steps.log-deployment-revision.outputs.commit_sha }}" > .revision

@@ -125,6 +125,7 @@ jobs:
           ssh_host: ${{ env.ssh_host }}
           ssh_port: ${{ inputs.ssh_port && fromJSON(inputs.ssh_port) || 22 }}
           ssh_user: ${{ env.ssh_user }}
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           exclude_paths: ${{ inputs.exclude_paths }}
           include_paths: ${{ steps.compose-diff.outputs.paths }}
       - name: Write server revision

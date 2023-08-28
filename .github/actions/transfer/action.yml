@@ -24,9 +24,6 @@ inputs:
   ssh_private_key:
     description: SSH private key
     required: true
-  ssh_known_hosts:
-    description: SSH hosts to trust
-    required: true
   exclude_paths:
     description: Paths to exclude from transfer, as accepted by rsync --exclude
     required: false

@@ -36,12 +36,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Install SSH key
-      uses: shimataro/ssh-key-action@v2
-      with:
-        key: ${{ inputs.ssh_private_key }}
-        name: id_rsa
-        known_hosts: ${{ inputs.ssh_known_hosts }}
     - name: "Create remote directory '${{ inputs.remote_dir }}' if it doesn't exist"
       env:
         COMMANDS: |

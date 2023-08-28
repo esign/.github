@@ -85,6 +85,12 @@ jobs:
       - id: log-deployment-revision
         name: Log deployment revision
         uses: esign/.github/.github/actions/log-revision@feature/diff-deploy
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          name: id_rsa
+          known_hosts: ${{ inputs.known_hosts }}
       - id: read-server-revision
         name: Read server revision
         uses: esign/.github/.github/actions/execute@feature/diff-deploy
@@ -119,8 +125,6 @@ jobs:
           ssh_host: ${{ env.ssh_host }}
           ssh_port: ${{ inputs.ssh_port && fromJSON(inputs.ssh_port) || 22 }}
           ssh_user: ${{ env.ssh_user }}
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh_known_hosts: ${{ inputs.known_hosts }}
           exclude_paths: ${{ inputs.exclude_paths }}
           include_paths: ${{ steps.compose-diff.paths }}
       - name: Write server revision

@@ -29,5 +29,5 @@ runs:
       shell: bash
       run: |
         stdout=$(ssh ssh://${{ inputs.user }}@${{ inputs.host }}:${{ inputs.port }} "cd ${{ inputs.target_path }} && ${{ inputs.commands }}")
-        stdout=$(echo $stdout | tr '\n' '')
+        stdout=$(echo $stdout | sed -z '1,$s/\r\n//g)
         echo "stdout=$stdout" >> $GITHUB_OUTPUT

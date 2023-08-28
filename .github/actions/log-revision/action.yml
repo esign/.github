@@ -1,9 +1,14 @@
 name: log-revision
 description: Log the currently checked out revision SHA
+outputs:
+  commit_sha:
+    description: "The current revision SHA"
+    value: ${{ steps.log-revision.outputs.commit_sha }}
 runs:
   using: composite
   steps:
     - name: Log revision
+      id: log-revision
       shell: bash
       run: |
         commit_sha=$(git rev-parse HEAD)

@@ -98,6 +98,7 @@ jobs:
           host: ${{ inputs.ssh_host }}
           port: ${{ inputs.ssh_port }}
           user: ${{ inputs.ssh_user }}
+          target_path: ${{ inputs.remote_dir }}
           commands: |
             revision=
             revision=$(cat ./.revision || true)
@@ -134,5 +135,6 @@ jobs:
           host: ${{ inputs.ssh_host }}
           port: ${{ inputs.ssh_port }}
           user: ${{ inputs.ssh_user }}
+          target_path: ${{ inputs.remote_dir }}
           commands: |
             echo "${{ steps.log-deployment-revision.outputs.commit_sha }}" > .revision

@@ -94,7 +94,7 @@ jobs:
           user: ${{ inputs.ssh_user }}
           commands: |
             revision=
-            if [ -f ./.revision ]; then revision=$(cat ./.revision); fi
+            [ -f ./.revision ] && revision=$(cat ./.revision)
             echo "$revision"
       - id: compose-diff
         name: Compose diff

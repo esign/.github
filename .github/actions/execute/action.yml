@@ -23,4 +23,4 @@ runs:
     - shell: bash
       run: |
         stdout=$(ssh ssh://${{ inputs.user }}@${{ inputs.host }}:${{ inputs.port }} "cd ${{ inputs.target_path }} && ${{ inputs.commands }}")
-        echo "stdout=$$stdout" >> $GITHUB_OUTPUT
+        echo "stdout=$stdout" >> $GITHUB_OUTPUT

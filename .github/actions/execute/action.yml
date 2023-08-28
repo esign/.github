@@ -17,10 +17,14 @@ inputs:
   commands:
     description: 'commands to run'
     required: true
+
 runs:
   using: composite
   steps:
     - shell: bash
       run: |
         stdout=$(ssh ssh://${{ inputs.user }}@${{ inputs.host }}:${{ inputs.port }} "cd ${{ inputs.target_path }} && ${{ inputs.commands }}")
-        echo "stdout=$stdout" >> $GITHUB_OUTPUT
+        EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+        echo "stdout<<$EOF" >> $GITHUB_OUTPUT
+        echo "$stdout" >> $GITHUB_OUTPUT
+        echo "$EOF" >> $GITHUB_OUTPUT

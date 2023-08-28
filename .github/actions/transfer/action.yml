@@ -44,8 +44,8 @@ runs:
         port: ${{ inputs.ssh_port }}
         user: ${{ inputs.ssh_user }}
         commands: ${{ env.COMMANDS }}
-    - id: compose-rysnc-flags
-      name: "Compose rsync exclude flags"
+    - id: compose-rsync-flags
+      name: "Compose rsync flags"
       shell: bash
       run: |
         excludes=$(echo "${{ inputs.exclude_paths }}" | sed -r '1,$s/^(.+)$/--exclude \1/' | sed -z '1,$s/\r\n/ /g')

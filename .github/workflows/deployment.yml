@@ -100,7 +100,7 @@ jobs:
           user: ${{ inputs.ssh_user }}
           target_path: ${{ inputs.remote_dir }}
           commands: |
-            echo "0e312788a7dd240f4a52c1526e9410acf6df3deb"
+            revision=emptystring && revision=$(([ -f .revision ] && cat .revision) || true) && echo "$revision"
       - id: compose-diff
         name: Compose diff
         shell: bash

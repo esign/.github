@@ -11,6 +11,11 @@ on:
         description: SHA of commit to check out (defaults to latest)
         required: false
         type: string
+      scratch_deploy:
+        description: Whether to deploy all files from scratch
+        required: false
+        default: true
+        type: boolean
       remote_dir:
         description: Path to the directory on the remote to transfer files to
         required: true
@@ -72,15 +77,42 @@ jobs:
             echo "fetch_depth=2" >> $GITHUB_ENV
           fi
       - name: Checkout
-        uses: esign/.github/.github/actions/checkout@v1
+        uses: esign/.github/.github/actions/checkout@feature/diff-deploy
         with:
           branch: ${{ env.branch }}
           github_sha: ${{ env.deploy_sha }}
           fetch_depth: ${{ env.fetch_depth }}
-      - name: Log revision
-        uses: esign/.github/.github/actions/log-revision@v1
+      - id: log-deployment-revision
+        name: Log deployment revision
+        uses: esign/.github/.github/actions/log-revision@feature/diff-deploy
+      - id: read-server-revision
+        name: Read server revision
+        uses: esign/.github/.github/actions/execute@feature/diff-deploy
+        with:
+          host: ${{ inputs.ssh_host }}
+          port: ${{ inputs.ssh_port }}
+          user: ${{ inputs.ssh_user }}
+          commands: |
+            revision=
+            if [ -f ./.revision ]; then revision=$(cat ./.revision); fi
+            echo "$revision"
+      - id: compose-diff
+        name: Compose diff
+        shell: bash
+        with:
+          old_sha: ${{ steps.read-server-revision.stdout }}
+          new_sha: ${{ steps.log-deployment-revision.commit_sha }}
+        run: |
+          paths=
+          
+          if [ "${{ inputs.scratch_deploy }}" = false ] && [ ! -z "${{ inputs.old_sha }}" ]
+          then
+            paths=git diff "${{ inputs.old_sha }} ${{ inputs.new_sha }}"    
+          fi
+        
+          echo "paths=$paths" >> $GITHUB_OUTPUT
       - name: Transfer
-        uses: esign/.github/.github/actions/transfer@v1
+        uses: esign/.github/.github/actions/transfer@feature/diff-deploy
         with:
           remote_dir: ${{ inputs.remote_dir }}
           local_dir: ${{ inputs.local_dir || '.' }}
@@ -91,3 +123,12 @@ jobs:
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh_known_hosts: ${{ inputs.known_hosts }}
           exclude_paths: ${{ inputs.exclude_paths }}
+          include_paths: ${{ steps.compose-diff.paths }}
+      - name: Write server revision
+        uses: esign/.github/.github/actions/execute@feature/diff-deploy
+        with:
+          host: ${{ inputs.ssh_host }}
+          port: ${{ inputs.ssh_port }}
+          user: ${{ inputs.ssh_user }}
+          commands: |
+            echo "${{ steps.log-deployment-revision.commit_sha }}" > .revision

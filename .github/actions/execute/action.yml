@@ -21,4 +21,6 @@ runs:
   using: composite
   steps:
     - shell: bash
-      run: ssh ssh://${{ inputs.user }}@${{ inputs.host }}:${{ inputs.port }} "cd ${{ inputs.target_path }} && ${{ inputs.commands }}"
+      run: |
+        stdout=$(ssh ssh://${{ inputs.user }}@${{ inputs.host }}:${{ inputs.port }} "cd ${{ inputs.target_path }} && ${{ inputs.commands }}")
+        echo "stdout=$$stdout" >> $GITHUB_OUTPUT

@@ -30,6 +30,9 @@ inputs:
   exclude_paths:
     description: Paths to exclude from transfer, as accepted by rsync --exclude
     required: false
+  include_paths:
+    description: Paths to include in transfer, as accepted by rsync --include
+    required: false
 runs:
   using: composite
   steps:
@@ -44,21 +47,30 @@ runs:
         COMMANDS: |
           cd /
           mkdir -p ${{ inputs.remote_dir }}; true
-      uses: esign/.github/.github/actions/execute@v1
+      uses: esign/.github/.github/actions/execute@feature/diff-deploy
       with:
         host: ${{ inputs.ssh_host }}
         port: ${{ inputs.ssh_port }}
         user: ${{ inputs.ssh_user }}
         commands: ${{ env.COMMANDS }}
-    - name: "Compose rsync exclude flags"
+    - id: compose-rysnc-flags
+      name: "Compose rsync exclude flags"
       shell: bash
       run: |
         excludes=$(echo "${{ inputs.exclude_paths }}" | sed -r '1,$s/^(.+)$/--exclude \1/' | sed -z '1,$s/\r\n/ /g')
-        echo "exclude_flags=$excludes" >> $GITHUB_ENV
+        includes=$(echo "${{ inputs.include_paths }}" | sed -r '1,$s/^(.+)$/--include \1/' | sed -z '1,$s/\r\n/ /g')
+        flags="$excludes"
+        
+        if [ ! -z "$includes" ]
+        then
+          flags="$flags $includes --exclude \"*\""
+        fi
+        
+        echo "flags=$flags" >> $GITHUB_OUTPUT
     - name: "Upload local '${{ inputs.local_dir }}' to remote '${{ inputs.remote_dir }}'"
       uses: burnett01/rsync-deployments@5.2
       with:
-        switches: -azr --delete ${{ env.exclude_flags }}
+        switches: -azr --delete ${{ steps.compose-rsync-flags.flags }}
         path: ${{ inputs.local_dir }}
         remote_path: ${{ inputs.remote_dir }}
         remote_host: ${{ inputs.ssh_host }}
@@ -70,7 +82,7 @@ runs:
         COMMANDS: |
           cd "${{ inputs.remote_dir }}"
           ${{ inputs.post_transfer_commands }}
-      uses: esign/.github/.github/actions/execute@v1
+      uses: esign/.github/.github/actions/execute@feature/diff-deploy
       with:
         host: ${{ inputs.ssh_host }}
         port: ${{ inputs.ssh_port }}

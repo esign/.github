@@ -107,7 +107,7 @@ jobs:
           
           if [ "${{ inputs.scratch_deploy }}" = false ] && [ ! -z $old_sha ]
           then
-            paths=$(git diff "$old_sha" "$new_sha")
+            paths=$(git diff --name-only "$old_sha" "$new_sha")
           fi
         
           echo "paths=$paths" >> $GITHUB_OUTPUT

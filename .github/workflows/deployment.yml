@@ -93,16 +93,10 @@ jobs:
           known_hosts: ${{ inputs.known_hosts }}
       - id: read-server-revision
         name: Read server revision
-        uses: esign/.github/.github/actions/execute@feature/diff-deploy
-        with:
-          host: ${{ inputs.ssh_host }}
-          port: ${{ inputs.ssh_port }}
-          user: ${{ inputs.ssh_user }}
-          target_path: ${{ inputs.remote_dir }}
-          commands: |
-            port=${{ inputs.ssh_port || '22' }}
-            revision=$(scp -P ${{ inputs.ssh_port }} ${{ inputs.ssh_user }}@${{ inputs.ssh_host }}:${{ inputs.remote_dir }}/.revision /dev/stdout)
-            echo "revision=$revision" >> $GITHUB_OUTPUT
+        shell: bash
+        run: |
+          revision=$(scp -P ${{ inputs.ssh_port || '22' }} ${{ inputs.ssh_user }}@${{ inputs.ssh_host }}:${{ inputs.remote_dir }}/.revision /dev/stdout)
+          echo "revision=$revision" >> $GITHUB_OUTPUT
       - id: compose-diff
         name: Compose diff
         shell: bash

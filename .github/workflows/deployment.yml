@@ -109,9 +109,12 @@ jobs:
           then
             paths=$(git diff --name-only "$old_sha" "$new_sha")
           fi
-        
-          echo $paths
-          echo "paths=$paths" >> $GITHUB_OUTPUT
+
+          {
+            echo 'diff_paths<<EOF'
+            echo $paths
+            echo EOF
+          } >> "$GITHUB_ENV"
       - name: Transfer
         uses: esign/.github/.github/actions/transfer@feature/diff-deploy
         with:
@@ -123,7 +126,7 @@ jobs:
           ssh_user: ${{ env.ssh_user }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           exclude_paths: ${{ inputs.exclude_paths }}
-          include_paths: ${{ steps.compose-diff.outputs.paths }}
+          include_paths: ${{ env.diff_paths }}
       - name: Write server revision
         uses: esign/.github/.github/actions/execute@feature/diff-deploy
         with:

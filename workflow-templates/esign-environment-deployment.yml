@@ -9,6 +9,11 @@ on:
         description: 'Commit SHA to be deployed'
         required: false
         type: string
+      scratch_deploy:
+        description: 'Deploy from scratch'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   deployment:
@@ -16,6 +21,7 @@ jobs:
     with:
       branch: ${{ vars.ENVIRONMENT_BRANCH }}
       github_sha: ${{ github.event.inputs.github_sha }}
+      scratch_deploy: "${{ github.event.inputs.scratch_deploy }}"
       ssh_host: ${{ vars.ENVIRONMENT_SSH_HOST }}
       ssh_user: ${{ vars.ENVIRONMENT_SSH_USER }}
       ssh_port: ${{ vars.ENVIRONMENT_SSH_PORT }}

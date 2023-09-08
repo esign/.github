@@ -1,12 +1,20 @@
 name: log-revision
 description: Log the currently checked out revision SHA
+outputs:
+  commit_sha:
+    description: "The current revision SHA"
+    value: ${{ steps.log-revision.outputs.commit_sha }}
 runs:
   using: composite
   steps:
     - name: Log revision
+      id: log-revision
       shell: bash
       run: |
         commit_sha=$(git rev-parse HEAD)
         commit_short_sha=$(git rev-parse --short HEAD)
         commit_msg=$(git log -1 --pretty=%B)
+        echo "commit_sha=$(echo "$commit_sha" | xargs)" >> $GITHUB_OUTPUT
+        echo "commit_short_sha=$(echo "commit_short_sha" | xargs)" >> $GITHUB_OUTPUT
+        echo "commit_msg=$(echo "commit_msg" | xargs)" >> $GITHUB_OUTPUT
         echo "::notice::commit $commit_short_sha \"$commit_msg\" https://github.com/${{ github.repository }}/commit/$commit_sha"

@@ -24,41 +24,52 @@ inputs:
   ssh_private_key:
     description: SSH private key
     required: true
-  ssh_known_hosts:
-    description: SSH hosts to trust
-    required: true
+  scratch:
+    description: Write all paths from scratch
+    required: false
   exclude_paths:
     description: Paths to exclude from transfer, as accepted by rsync --exclude
+    required: false
+  include_paths:
+    description: Paths to include in transfer, as accepted by rsync --include
     required: false
 runs:
   using: composite
   steps:
-    - name: Install SSH key
-      uses: shimataro/ssh-key-action@v2
-      with:
-        key: ${{ inputs.ssh_private_key }}
-        name: id_rsa
-        known_hosts: ${{ inputs.ssh_known_hosts }}
     - name: "Create remote directory '${{ inputs.remote_dir }}' if it doesn't exist"
       env:
         COMMANDS: |
           cd /
           mkdir -p ${{ inputs.remote_dir }}; true
-      uses: esign/.github/.github/actions/execute@v1
+      uses: esign/.github/.github/actions/execute@feature/diff-deploy
       with:
         host: ${{ inputs.ssh_host }}
         port: ${{ inputs.ssh_port }}
         user: ${{ inputs.ssh_user }}
         commands: ${{ env.COMMANDS }}
-    - name: "Compose rsync exclude flags"
+    - id: compose-rsync-flags
+      name: "Compose rsync flags"
       shell: bash
       run: |
         excludes=$(echo "${{ inputs.exclude_paths }}" | sed -r '1,$s/^(.+)$/--exclude \1/' | sed -z '1,$s/\r\n/ /g')
-        echo "exclude_flags=$excludes" >> $GITHUB_ENV
+        includes=$(echo "${{ inputs.include_paths }}" | sed -r '1,$s/^(.+)$/--include \1/' | sed -z '1,$s/\r\n/ /g')
+        flags="$excludes"
+        
+        if [ ! -z "$includes" ]
+        then
+          flags="$flags $includes"
+        fi
+        
+        if [ "${{ inputs.scratch }}" = false ]
+        then
+          flags="$flags --exclude \"*\""
+        fi
+        
+        echo "flags=$flags" >> $GITHUB_OUTPUT
     - name: "Upload local '${{ inputs.local_dir }}' to remote '${{ inputs.remote_dir }}'"
       uses: burnett01/rsync-deployments@5.2
       with:
-        switches: -azr --delete ${{ env.exclude_flags }}
+        switches: -azr --delete ${{ steps.compose-rsync-flags.outputs.flags }}
         path: ${{ inputs.local_dir }}
         remote_path: ${{ inputs.remote_dir }}
         remote_host: ${{ inputs.ssh_host }}
@@ -70,7 +81,7 @@ runs:
         COMMANDS: |
           cd "${{ inputs.remote_dir }}"
           ${{ inputs.post_transfer_commands }}
-      uses: esign/.github/.github/actions/execute@v1
+      uses: esign/.github/.github/actions/execute@feature/diff-deploy
       with:
         host: ${{ inputs.ssh_host }}
         port: ${{ inputs.ssh_port }}

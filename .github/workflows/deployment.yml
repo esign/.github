@@ -100,6 +100,7 @@ jobs:
           user: ${{ inputs.ssh_user }}
           target_path: ${{ inputs.remote_dir }}
           commands: |
+            port=${{ inputs.ssh_port || '22' }}
             revision=$(scp -P ${{ inputs.ssh_port }} ${{ inputs.ssh_user }}@${{ inputs.ssh_host }}:${{ inputs.remote_dir }}/.revision /dev/stdout)
             echo "revision=$revision" >> $GITHUB_OUTPUT
       - id: compose-diff

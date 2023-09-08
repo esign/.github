@@ -52,7 +52,7 @@ runs:
       shell: bash
       run: |
         excludes=$(echo "${{ inputs.exclude_paths }}" | sed -r '1,$s/^(.+)$/--exclude \1/' | sed -z '1,$s/\r\n/ /g')
-        includes=$(echo "${{ inputs.include_paths }}" | sed -r '1,$s/^(.+)$/--include \1/' | sed -z '1,$s/\n/ /g')
+        includes=$(echo "${{ inputs.include_paths }}" | sed -r '1,$s/^(.+)$/--include \1/' | sed -z '1,$s/\r\n/ /g')
         flags="$excludes"
         
         if [ ! -z "$includes" ]

@@ -103,18 +103,16 @@ jobs:
         run: |
           old_sha="${{ steps.read-server-revision.outputs.revision }}"
           new_sha="${{ steps.log-deployment-revision.outputs.commit_sha }}"
-          paths=
+          echo "diff_paths=" >> "$GITHUB_ENV"
           
           if [ "${{ inputs.scratch_deploy }}" = false ] && [ ! -z $old_sha ]
           then
-            paths=$(git diff --name-only "$old_sha" "$new_sha")
+            {
+              echo 'diff_paths<<EOF'
+              git diff --name-only "$old_sha" "$new_sha"
+              echo EOF
+            } >> "$GITHUB_ENV"
           fi
-
-          {
-            echo 'diff_paths<<EOF'
-            echo $paths
-            echo EOF
-          } >> "$GITHUB_ENV"
       - name: Transfer
         uses: esign/.github/.github/actions/transfer@v2
         with:

@@ -24,6 +24,9 @@ inputs:
   ssh_private_key:
     description: SSH private key
     required: true
+  scratch:
+    description: Write all paths from scratch
+    required: false
   exclude_paths:
     description: Paths to exclude from transfer, as accepted by rsync --exclude
     required: false
@@ -54,7 +57,12 @@ runs:
         
         if [ ! -z "$includes" ]
         then
-          flags="$flags $includes --exclude \"*\""
+          flags="$flags $includes"
+        fi
+        
+        if [ "${{ inputs.scratch_deploy }}" = false ]
+        then
+          flags="$flags --exclude \"*\""
         fi
         
         echo "flags=$flags" >> $GITHUB_OUTPUT

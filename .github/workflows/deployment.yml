@@ -100,12 +100,13 @@ jobs:
           user: ${{ inputs.ssh_user }}
           target_path: ${{ inputs.remote_dir }}
           commands: |
-            revision=emptystring && revision=$(([ -f .revision ] && cat .revision) || true) && echo "$revision"
+            revision=$(scp -P ${{ inputs.ssh_port }} ${{ inputs.ssh_user }}@${{ inputs.ssh_host }}:${{ inputs.remote_dir }}/.revision /dev/stdout)
+            echo "revision=$revision" >> $GITHUB_OUTPUT
       - id: compose-diff
         name: Compose diff
         shell: bash
         run: |
-          old_sha="${{ steps.read-server-revision.outputs.stdout }}"
+          old_sha="${{ steps.read-server-revision.outputs.revision }}"
           new_sha="${{ steps.log-deployment-revision.outputs.commit_sha }}"
           paths=
           

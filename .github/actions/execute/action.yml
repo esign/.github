@@ -17,17 +17,8 @@ inputs:
   commands:
     description: 'commands to run'
     required: true
-outputs:
-  stdout:
-    description: "Standard output"
-    value: ${{ steps.execute.outputs.stdout }}
 runs:
   using: composite
   steps:
-    - name: Execute
-      id: execute
-      shell: bash
-      run: |
-        stdout=$(ssh ssh://${{ inputs.user }}@${{ inputs.host }}:${{ inputs.port }} "cd ${{ inputs.target_path }} && ${{ inputs.commands }}")
-        stdout=$(echo $stdout | sed -z '1,$s/\r\n//g')
-        echo "stdout=$stdout" >> $GITHUB_OUTPUT
+    - shell: bash
+      run: ssh ${{ inputs.user }}@${{ inputs.host }}:${{ inputs.port }} "cd ${{ inputs.target_path }} && ${{ inputs.commands }}"

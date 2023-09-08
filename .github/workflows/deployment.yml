@@ -77,14 +77,14 @@ jobs:
             echo "fetch_depth=2" >> $GITHUB_ENV
           fi
       - name: Checkout
-        uses: esign/.github/.github/actions/checkout@feature/diff-deploy
+        uses: esign/.github/.github/actions/checkout@v2
         with:
           branch: ${{ env.branch }}
           github_sha: ${{ env.deploy_sha }}
           fetch_depth: ${{ env.fetch_depth }}
       - id: log-deployment-revision
         name: Log deployment revision
-        uses: esign/.github/.github/actions/log-revision@feature/diff-deploy
+        uses: esign/.github/.github/actions/log-revision@v2
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
@@ -116,7 +116,7 @@ jobs:
             echo EOF
           } >> "$GITHUB_ENV"
       - name: Transfer
-        uses: esign/.github/.github/actions/transfer@feature/diff-deploy
+        uses: esign/.github/.github/actions/transfer@v2
         with:
           remote_dir: ${{ inputs.remote_dir }}
           local_dir: ${{ inputs.local_dir || '.' }}
@@ -129,7 +129,7 @@ jobs:
           exclude_paths: ${{ inputs.exclude_paths }}
           include_paths: ${{ env.diff_paths }}
       - name: Write server revision
-        uses: esign/.github/.github/actions/execute@feature/diff-deploy
+        uses: esign/.github/.github/actions/execute@v2
         with:
           host: ${{ inputs.ssh_host }}
           port: ${{ inputs.ssh_port }}

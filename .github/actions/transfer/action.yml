@@ -60,7 +60,7 @@ runs:
           flags="$flags $includes"
         fi
         
-        if [ "${{ inputs.scratch_deploy }}" = false ]
+        if [ "${{ inputs.scratch }}" = false ]
         then
           flags="$flags --exclude \"*\""
         fi

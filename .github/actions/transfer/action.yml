@@ -59,6 +59,8 @@ runs:
         then
           flags="$flags $includes"
         fi
+
+        flags="$flags --include \"*/\""
         
         if [ "${{ inputs.scratch }}" = false ]
         then

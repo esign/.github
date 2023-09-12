@@ -95,7 +95,7 @@ jobs:
         name: Read server revision
         shell: bash
         run: |
-          revision=$(scp -P ${{ inputs.ssh_port || '22' }} ${{ inputs.ssh_user }}@${{ inputs.ssh_host }}:${{ inputs.remote_dir }}/.githubactionsrevision /dev/stdout 2>/dev/null)
+          revision=$(scp -P ${{ inputs.ssh_port || '22' }} ${{ inputs.ssh_user }}@${{ inputs.ssh_host }}:${{ inputs.remote_dir }}/.githubactionsrevision /dev/stdout 2>/dev/null || true)
           echo "revision=$revision" >> $GITHUB_OUTPUT
       - id: compose-diff
         name: Compose diff

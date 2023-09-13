@@ -113,6 +113,13 @@ jobs:
               echo EOF
             } >> "$GITHUB_ENV"
           fi
+          
+          scratch_deploy=false
+          if [ "${{ inputs.scratch_deploy }}" = true ] || [ -z $old_sha ]
+          then
+            scratch_deploy=true
+          fi
+          echo "scratch_deploy=$scratch_deploy" >> $GITHUB_ENV
       - name: Transfer
         uses: esign/.github/.github/actions/transfer@v2
         with:
@@ -123,7 +130,7 @@ jobs:
           ssh_port: ${{ inputs.ssh_port && fromJSON(inputs.ssh_port) || 22 }}
           ssh_user: ${{ env.ssh_user }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          scratch: ${{ inputs.scratch_deploy }}
+          scratch: ${{ env.scratch_deploy }}
           exclude_paths: ${{ inputs.exclude_paths }}
           include_paths: ${{ env.diff_paths }}
       - name: Write server revision

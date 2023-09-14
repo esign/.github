@@ -67,6 +67,7 @@ jobs:
           echo "branch=$(echo "${{ inputs.branch }}" | xargs)" >> $GITHUB_ENV
           echo "ssh_host=$(echo "${{ inputs.ssh_host }}" | xargs)" >> $GITHUB_ENV
           echo "ssh_user=$(echo "${{ inputs.ssh_user }}" | xargs)" >> $GITHUB_ENV
+          echo "post_deploy_commands=$(echo "${{ inputs.post_deploy_commands }}" | xargs)" >> $GITHUB_ENV
 
           if [ ! -z "${{ inputs.github_sha }}" ]
           then
@@ -125,7 +126,7 @@ jobs:
         with:
           remote_dir: ${{ inputs.remote_dir }}
           local_dir: ${{ inputs.local_dir || '.' }}
-          post_transfer_commands: ${{ inputs.post_deploy_commands }}
+          post_transfer_commands: ${{ env.post_deploy_commands }}
           ssh_host: ${{ env.ssh_host }}
           ssh_port: ${{ inputs.ssh_port && fromJSON(inputs.ssh_port) || 22 }}
           ssh_user: ${{ env.ssh_user }}

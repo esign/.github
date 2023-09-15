@@ -69,7 +69,7 @@ jobs:
           echo "ssh_user=$(echo "${{ inputs.ssh_user }}" | xargs)" >> $GITHUB_ENV
  
           echo "POST_DEPLOYMENT_COMMANDS<<EOF" >> $GITHUB_ENV
-          echo $post_deploy_commands >> $GITHUB_ENV
+          echo "${{ inputs.post_deploy_commands }}" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
           if [ ! -z "${{ inputs.github_sha }}" ]

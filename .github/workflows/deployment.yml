@@ -133,7 +133,7 @@ jobs:
           fi
           echo "scratch_deploy=$scratch_deploy" >> $GITHUB_ENV
       - name: Transfer
-        uses: esign/.github/.github/actions/transfer@v2
+        uses: esign/.github/.github/actions/transfer@test-eof
         with:
           remote_dir: ${{ inputs.remote_dir }}
           local_dir: ${{ inputs.local_dir || '.' }}

@@ -52,19 +52,25 @@ runs:
       shell: bash
       run: |
         excludes=$(echo "${{ inputs.exclude_paths }}" | sed -r '1,$s/^(.+)$/--exclude \1/' | sed -z '1,$s/\n/ /g')
+        echo "$excludes"
         includes=$(echo "${{ inputs.include_paths }}" | sed -r '1,$s/^(.+)$/--include \1/' | sed -z '1,$s/\n/ /g')
+        echo "$includes"
         flags="$excludes"
+        echo "$flags"
         
         if [ ! -z "$includes" ]
         then
           flags="$flags $includes"
+          echo "$flags"
         fi
 
         flags="$flags --include \"*/\""
+        echo "$flags"
         
         if [ "${{ inputs.scratch }}" = false ]
         then
           flags="$flags --exclude \"*\""
+          echo "$flags"
         fi
         
         echo "flags=$flags" >> $GITHUB_OUTPUT

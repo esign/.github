@@ -71,13 +71,13 @@ jobs:
           {
               echo 'post_deploy_commands<<EOF'
               echo "${{ inputs.post_deploy_commands }}" | sed $'s/\r$//' | sed '/^$/d'
-              echo 'EOF'
+              echo EOF
           } >> "$GITHUB_ENV"
           
           {
               echo 'exclude_paths<<EOF'
               echo "${{ inputs.exclude_paths }}" | sed $'s/\r$//' | sed '/^$/d'
-              echo 'EOF'
+              echo EOF
           } >> "$GITHUB_ENV"
 
           if [ ! -z "${{ inputs.github_sha }}" ]
@@ -122,7 +122,7 @@ jobs:
             {
               echo 'diff_paths<<EOF'
               git diff --name-only "$old_sha" "$new_sha"
-              echo 'EOF'
+              echo EOF
             } >> "$GITHUB_ENV"
           fi
           

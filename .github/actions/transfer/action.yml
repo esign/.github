@@ -74,28 +74,3 @@ runs:
         fi
         
         echo "flags=$flags" >> $GITHUB_OUTPUT
-    - name: "Upload local '${{ inputs.local_dir }}' to remote '${{ inputs.remote_dir }}'"
-      uses: burnett01/rsync-deployments@5.2
-      with:
-        switches: -azr --delete ${{ steps.compose-rsync-flags.outputs.flags }}
-        path: ${{ inputs.local_dir }}
-        remote_path: ${{ inputs.remote_dir }}
-        remote_host: ${{ inputs.ssh_host }}
-        remote_port: ${{ inputs.ssh_port }}
-        remote_user: ${{ inputs.ssh_user }}
-        remote_key: ${{ inputs.ssh_private_key }}
-    - id: compose-post-transfer-commands
-      name: "Compose post transfer commands"
-      shell: bash
-      run: |
-        commands=$(echo "${{ inputs.post_transfer_commands }}" | sed -z '1,$s/\n/ && /g')
-        
-        echo "commands=$commands" >> $GITHUB_OUTPUT
-    - name: Execute post transfer commands
-      uses: esign/.github/.github/actions/execute@v2
-      with:
-        host: ${{ inputs.ssh_host }}
-        port: ${{ inputs.ssh_port }}
-        user: ${{ inputs.ssh_user }}
-        target_path: ${{ inputs.remote_dir }}
-        commands: ${{ steps.compose-post-transfer-commands.outputs.commands }}

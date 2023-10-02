@@ -78,14 +78,17 @@ runs:
         remote_port: ${{ inputs.ssh_port }}
         remote_user: ${{ inputs.ssh_user }}
         remote_key: ${{ inputs.ssh_private_key }}
+    - id: compose-post-transfer-commands
+      name: "Compose post transfer commands"
+      shell: bash
+      run: |
+        commands=$(echo "${{ inputs.post_transfer_commands }}" | sed '1,$s/\r//g' | sed '/^$/d' | sed -z '1,$s/\n/ \&\& /g' | sed -r '1,$s/\s\&\&\s?$//g')
+        echo "commands=$commands" >> $GITHUB_OUTPUT
     - name: Execute post transfer commands
-      env:
-        COMMANDS: |
-          cd "${{ inputs.remote_dir }}"
-          ${{ inputs.post_transfer_commands }}
       uses: esign/.github/.github/actions/execute@v2
       with:
         host: ${{ inputs.ssh_host }}
         port: ${{ inputs.ssh_port }}
         user: ${{ inputs.ssh_user }}
-        commands: ${{ env.COMMANDS }}
+        target_path: ${{ inputs.remote_dir }}
+        commands: ${{ steps.compose-post-transfer-commands.outputs.commands }}

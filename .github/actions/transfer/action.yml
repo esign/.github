@@ -51,7 +51,7 @@ runs:
       name: "Compose rsync flags"
       shell: bash
       run: |
-        excludes=$(echo "${{ inputs.exclude_paths }}" | sed -r '1,$s/^(.+)$/--exclude \1/' | sed -z '1,$s/\n/ /g')
+        excludes=$(echo "${{ inputs.exclude_paths }}" | sed -r '1,$s/^(.+)$/--exclude \1/' | sed -z '1,$s/\r\n/ /g')
         includes=$(echo "${{ inputs.include_paths }}" | sed -r '1,$s/^(.+)$/--include \1/' | sed -z '1,$s/\n/ /g')
         flags="$excludes"
         
@@ -82,7 +82,7 @@ runs:
       name: "Compose post transfer commands"
       shell: bash
       run: |
-        commands=$(echo "${{ inputs.post_transfer_commands }}" | sed -z '1,$s/\n/ && /g')
+        commands=$(echo "${{ inputs.post_transfer_commands }}" | sed '/^$/d' | sed -z '1,$s/\r\n/ && /g')
         
         echo "commands=$commands" >> $GITHUB_OUTPUT
     - name: Execute post transfer commands

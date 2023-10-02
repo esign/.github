@@ -67,18 +67,6 @@ jobs:
           echo "branch=$(echo "${{ inputs.branch }}" | xargs)" >> $GITHUB_ENV
           echo "ssh_host=$(echo "${{ inputs.ssh_host }}" | xargs)" >> $GITHUB_ENV
           echo "ssh_user=$(echo "${{ inputs.ssh_user }}" | xargs)" >> $GITHUB_ENV
-          
-          {
-              echo 'post_deploy_commands<<EOF'
-              echo "${{ inputs.post_deploy_commands }}" | sed '/^$/d' | sed '1,$s/\r$/g'
-              echo EOF
-          } >> "$GITHUB_ENV"
-          
-          {
-              echo 'exclude_paths<<EOF'
-              echo "${{ inputs.exclude_paths }}" | sed '/^$/d' | sed '1,$s/\r$/g'
-              echo EOF
-          } >> "$GITHUB_ENV"
 
           if [ ! -z "${{ inputs.github_sha }}" ]
           then
@@ -137,13 +125,13 @@ jobs:
         with:
           remote_dir: ${{ inputs.remote_dir }}
           local_dir: ${{ inputs.local_dir || '.' }}
-          post_transfer_commands: ${{ env.post_deploy_commands }}
+          post_transfer_commands: ${{ inputs.post_deploy_commands }}
           ssh_host: ${{ env.ssh_host }}
           ssh_port: ${{ inputs.ssh_port && fromJSON(inputs.ssh_port) || 22 }}
           ssh_user: ${{ env.ssh_user }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           scratch: ${{ env.scratch_deploy }}
-          exclude_paths: ${{ env.exclude_paths }}
+          exclude_paths: ${{ inputs.exclude_paths }}
           include_paths: ${{ env.diff_paths }}
       - name: Write server revision
         uses: esign/.github/.github/actions/execute@v2

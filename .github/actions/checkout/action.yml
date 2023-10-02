@@ -18,7 +18,10 @@ runs:
       with:
         ref: ${{ inputs.branch }}
         fetch-depth: ${{ inputs.fetch_depth }}
-    - name: "Checkout ${{ inputs.branch }} at commit ${{ env.deploy_sha }}"
+    - name: "Checkout ${{ inputs.branch }} at specified commit"
       shell: bash
       run: |
-        git checkout ${{ inputs.github_sha }}
+        if [ ! -z "${{ inputs.github_sha }}" ]
+        then
+          git checkout ${{ inputs.github_sha }}
+        fi

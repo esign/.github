@@ -73,7 +73,6 @@ jobs:
             echo "deploy_sha=${{ inputs.github_sha }}" >> $GITHUB_ENV
             echo "fetch_depth=0" >> $GITHUB_ENV
           else
-            echo "deploy_sha=${{ github.sha }}" >> $GITHUB_ENV
             echo "fetch_depth=2" >> $GITHUB_ENV
           fi
       - name: Checkout
@@ -84,7 +83,7 @@ jobs:
           fetch_depth: ${{ env.fetch_depth }}
       - id: log-deployment-revision
         name: Log deployment revision
-        uses: esign/.github/.github/actions/log-revision@v2
+        uses: esign/.github/.github/actions/log-revision@dev
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:

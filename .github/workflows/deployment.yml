@@ -67,16 +67,16 @@ jobs:
           echo "branch=$(echo "${{ inputs.branch }}" | xargs)" >> $GITHUB_ENV
           echo "ssh_host=$(echo "${{ inputs.ssh_host }}" | xargs)" >> $GITHUB_ENV
           echo "ssh_user=$(echo "${{ inputs.ssh_user }}" | xargs)" >> $GITHUB_ENV
-
+          
           {
               echo 'post_deploy_commands<<EOF'
-              echo "${{ inputs.post_deploy_commands }}" | sed $'s/\r$//' | sed '/^$/d'
+              echo "${{ inputs.post_deploy_commands }}" | sed '/^$/d' | sed '1,$s/\r$/g'
               echo EOF
           } >> "$GITHUB_ENV"
           
           {
               echo 'exclude_paths<<EOF'
-              echo "${{ inputs.exclude_paths }}" | sed $'s/\r$//' | sed '/^$/d'
+              echo "${{ inputs.exclude_paths }}" | sed '/^$/d' | sed '1,$s/\r$/g'
               echo EOF
           } >> "$GITHUB_ENV"
 

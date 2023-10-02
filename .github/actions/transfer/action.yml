@@ -41,7 +41,7 @@ runs:
         COMMANDS: |
           cd /
           mkdir -p ${{ inputs.remote_dir }}; true
-      uses: esign/.github/.github/actions/execute@dev
+      uses: esign/.github/.github/actions/execute@v2
       with:
         host: ${{ inputs.ssh_host }}
         port: ${{ inputs.ssh_port }}
@@ -85,7 +85,7 @@ runs:
         commands=$(echo "${{ inputs.post_transfer_commands }}" | sed '1,$s/\r//g' | sed '/^$/d' | sed -z '1,$s/\n/ \&\& /g' | sed -r '1,$s/\s\&\&\s?$//g')
         echo "commands=$commands" >> $GITHUB_OUTPUT
     - name: Execute post transfer commands
-      uses: esign/.github/.github/actions/execute@dev
+      uses: esign/.github/.github/actions/execute@v2
       with:
         host: ${{ inputs.ssh_host }}
         port: ${{ inputs.ssh_port }}

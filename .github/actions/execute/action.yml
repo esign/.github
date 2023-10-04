@@ -21,4 +21,4 @@ runs:
   using: composite
   steps:
     - shell: bash
-      run: ssh -o ServerAliveInterval=1200 ssh://${{ inputs.user }}@${{ inputs.host }}:${{ inputs.port }} "cd ${{ inputs.target_path }} && ${{ inputs.commands }}"
+      run: ssh -o ServerAliveInterval=1200 -o ServerAliveCountMax=3 ssh://${{ inputs.user }}@${{ inputs.host }}:${{ inputs.port }} "cd ${{ inputs.target_path }} && ${{ inputs.commands }}"

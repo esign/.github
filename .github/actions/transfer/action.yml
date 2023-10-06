@@ -39,13 +39,13 @@ runs:
     - name: "Create remote directory '${{ inputs.remote_dir }}' if it doesn't exist"
       env:
         COMMANDS: |
-          cd /
           mkdir -p ${{ inputs.remote_dir }}; true
       uses: esign/.github/.github/actions/execute@v2
       with:
         host: ${{ inputs.ssh_host }}
         port: ${{ inputs.ssh_port }}
         user: ${{ inputs.ssh_user }}
+        target_path: /
         commands: ${{ env.COMMANDS }}
     - id: compose-rsync-flags
       name: "Compose rsync flags"

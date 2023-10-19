@@ -85,6 +85,7 @@ runs:
         commands=$(echo "${{ inputs.post_transfer_commands }}" | sed '1,$s/\r//g' | sed '/^$/d' | sed -z '1,$s/\n/ \&\& /g' | sed -r '1,$s/\s\&\&\s?$//g')
         echo "commands=$commands" >> $GITHUB_OUTPUT
     - name: Execute post transfer commands
+      if: ${{ steps.compose-post-transfer-commands.outputs.commands }}
       uses: esign/.github/.github/actions/execute@v2
       with:
         host: ${{ inputs.ssh_host }}

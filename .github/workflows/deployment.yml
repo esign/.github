@@ -106,7 +106,7 @@ jobs:
           then
             {
               echo 'diff_paths<<EOF'
-              git diff --name-only -M100% "$old_sha" "$new_sha"
+              git diff --name-only --no-renames "$old_sha" "$new_sha"
               echo EOF
             } >> "$GITHUB_ENV"
           fi

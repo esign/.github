@@ -102,14 +102,19 @@ jobs:
           new_sha="${{ steps.log-deployment-revision.outputs.commit_sha }}"
           echo "diff_paths=" >> "$GITHUB_ENV"
           
+          cwd=`pwd`
+          cd "${{ inputs.local_dir || '.' }}"
+          
           if [ "${{ inputs.scratch_deploy }}" = false ] && [ ! -z $old_sha ]
           then
             {
               echo 'diff_paths<<EOF'
-              git diff --name-only --no-renames "$old_sha" "$new_sha"
+              git diff --name-only --no-renames --relative "$old_sha" "$new_sha"
               echo EOF
             } >> "$GITHUB_ENV"
           fi
+          
+          cd $cwd
           
           scratch_deploy=false
           if [ "${{ inputs.scratch_deploy }}" = true ] || [ -z $old_sha ]

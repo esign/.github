@@ -14,8 +14,8 @@ on:
       scratch_deploy:
         description: Whether to deploy all files from scratch
         required: false
-        default: false
-        type: boolean
+        default: 'false'
+        type: string
       remote_dir:
         description: Path to the directory on the remote to transfer files to
         required: true

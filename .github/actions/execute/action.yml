@@ -21,4 +21,7 @@ runs:
   using: composite
   steps:
     - shell: bash
-      run: ssh ssh://${{ inputs.user }}@${{ inputs.host }}:${{ inputs.port }} "cd ${{ inputs.target_path }} && ${{ inputs.commands }}"
+      # Keep the connection alive while the remote command runs. Steps such as installing npm
+      # dependencies or building assets can go minutes without writing any output, and the idle
+      # connection gets dropped, failing the step with "Broken pipe" and exit code 255.
+      run: ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=20 ssh://${{ inputs.user }}@${{ inputs.host }}:${{ inputs.port }} "cd ${{ inputs.target_path }} && ${{ inputs.commands }}"

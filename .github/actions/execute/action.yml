@@ -21,4 +21,9 @@ runs:
   using: composite
   steps:
     - shell: bash
-      run: ssh ssh://${{ inputs.user }}@${{ inputs.host }}:${{ inputs.port }} "cd ${{ inputs.target_path }} && ${{ inputs.commands }}"
+      # ServerAliveInterval/CountMax: GitHub-hosted runners sit behind Azure outbound NAT, which drops
+      # TCP flows that are idle for ~4 minutes. Remote commands that produce no output for that long
+      # (e.g. a silent `npm run prod`) would otherwise fail with "client_loop: send disconnect: Broken pipe"
+      # or hang until the job timeout. The keepalive probes keep the connection active and make a dead
+      # connection fail after 5 minutes instead of hanging.
+      run: ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=10 ssh://${{ inputs.user }}@${{ inputs.host }}:${{ inputs.port }} "cd ${{ inputs.target_path }} && ${{ inputs.commands }}"

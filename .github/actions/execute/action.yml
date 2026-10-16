@@ -21,4 +21,6 @@ runs:
   using: composite
   steps:
     - shell: bash
-      run: ssh ssh://${{ inputs.user }}@${{ inputs.host }}:${{ inputs.port }} "cd ${{ inputs.target_path }} && ${{ inputs.commands }}"
+      # Keepalives: the runner's NAT drops idle connections after ~4 min, which breaks
+      # long silent remote commands (e.g. a quiet `npm run prod`).
+      run: ssh -o ServerAliveInterval=30 -o ServerAliveCountMax=10 ssh://${{ inputs.user }}@${{ inputs.host }}:${{ inputs.port }} "cd ${{ inputs.target_path }} && ${{ inputs.commands }}"
